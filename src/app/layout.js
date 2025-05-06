@@ -1,5 +1,5 @@
 import "./globals.css";
-// import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     <html className="scroll-smooth">
       <body className="font-inter text-gray-900 bg-gray-50">
         <div className="flex flex-col min-h-screen">
-          {/* <Navbar /> */}
+          <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
         </div>
