@@ -1,0 +1,320 @@
+// This is your Prisma schema file for PostgreSQL
+// To learn more about Prisma schemas, visit: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Definisi enum
+enum Role {
+  ADMIN
+  DIVISION_LEADER
+  MEMBER
+}
+
+enum PROGRAM_STATUS {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum EVENT_TYPE {
+  REGULAR
+  SIFEST
+}
+
+enum EVENT_STATUS {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum SIFEST_ACTIVITY {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum POST_CATEGORY {
+  NEWS
+  ANNOUNCEMENT
+  ARTICLE
+}
+
+enum POST_STATUS {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// Model divisi
+model Division {
+  id          Int      @id @default(autoincrement())
+  leaderId    Int?     @unique @map("leader_id")
+  name        String   @unique @db.VarChar(100) // Tambahkan @unique
+  description String   @db.Text
+  logoUrl     String   @map("logo_url") @db.VarChar(255)
+  vision      String   @db.VarChar(255)
+  mission     String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  leader      User?    @relation("DivisionLeader", fields: [leaderId], references: [id], onDelete: SetNull)
+  users       User[]   @relation("DivisionMembers")
+  programs    Program[]
+  achievements Achievement[]
+
+  @@map("divisions")
+}
+
+// Model pengguna
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(100)
+  password     String    @db.VarChar(255)
+  photo_url    String?   @db.VarChar(255)
+  role         Role
+  divisionId   Int?      @map("division_id")
+  position     String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  // Relasi
+  division     Division? @relation("DivisionMembers", fields: [divisionId], references: [id])
+  ledDivision  Division? @relation("DivisionLeader")
+  posts        Post[]
+  
+  sessions     Session[]
+  
+  // Relasi untuk struktur organisasi
+  asLeader     OrganizationStructure[] @relation("Leader")
+  asViceLeader OrganizationStructure[] @relation("ViceLeader")
+  asSecretary  OrganizationStructure[] @relation("Secretary")
+  asTreasurer  OrganizationStructure[] @relation("Treasurer")
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    Int
+  expiresAt DateTime
+
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+// Model program
+model Program {
+  id          Int            @id @default(autoincrement())
+  divisionId  Int            @map("division_id")
+  name        String         @db.VarChar(100)
+  description String         @db.Text
+  imageUrl    String         @map("image_url") @db.VarChar(255)
+  status      PROGRAM_STATUS @default(UPCOMING)
+  startDate   DateTime       @map("start_date")
+  endDate     DateTime       @map("end_date")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  // Relasi
+  division    Division       @relation(fields: [divisionId], references: [id])
+
+  @@map("programs")
+}
+
+// Model acara
+model Event {
+  id          Int          @id @default(autoincrement())
+  name        String       @db.VarChar(100)
+  description String       @db.Text
+  imageUrl    String       @map("image_url") @db.VarChar(255)
+  startDate   DateTime     @map("start_date")
+  endDate     DateTime     @map("end_date")
+  location    String       @db.VarChar(255)
+  academicYear Int         @map("academic_year")
+  type        EVENT_TYPE
+  status      EVENT_STATUS @default(UPCOMING)
+  sifestId    Int?         @map("sifest_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  // Relasi
+  sifest      SIFest?      @relation(fields: [sifestId], references: [id], onDelete: SetNull)
+  gallery     EventGallery[]
+
+  @@map("events")
+}
+
+// Model galeri acara
+model EventGallery {
+  id          Int      @id @default(autoincrement())
+  eventId     Int      @map("event_id")
+  imageUrl    String   @map("image_url") @db.VarChar(255)
+  caption     String   @db.VarChar(100)
+  uploadedAt  DateTime @map("uploaded_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_gallery")
+}
+
+// Model alumni
+model Alumni {
+  id             Int      @id @default(autoincrement())
+  name           String   @db.VarChar(100)
+  email          String   @unique @db.VarChar(100)
+  bio            String   @db.Text
+  positionInHimsi Json    @map("position_in_himsi")
+  profileImage   String   @map("profile_image") @db.VarChar(255)
+  graduationYear Int      @map("graduation_year")
+  entryYear      Int      @map("entry_year")
+  currentJob     String   @map("current_job") @db.VarChar(100)
+  company        String   @db.VarChar(100)
+  linkedinUrl    String   @map("linkedin_url") @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("alumni")
+}
+
+// Model SIFest
+model SIFest {
+  id          Int      @id @default(autoincrement())
+  year        Int
+  theme       String   @db.Text
+  logoUrl     String   @map("logo_url") @db.VarChar(255)
+  description String   @db.Text
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  activities  SIFestActivity[]
+  events      Event[]
+
+  @@map("sifest")
+}
+
+model SIFestActivity {
+  id          Int             @id @default(autoincrement())
+  sifestId    Int             @map("sifest_id")
+  name        String          @db.VarChar(100)
+  description String          @db.Text
+  imageUrl    String          @map("image_url") @db.VarChar(255)
+  startDate   DateTime        @map("start_date")
+  endDate     DateTime        @map("end_date")
+  location    String          @db.VarChar(100)
+  status      SIFEST_ACTIVITY
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  // Relasi
+  sifest      SIFest          @relation(fields: [sifestId], references: [id], onDelete: Cascade)
+
+  @@map("sifest_activities")
+}
+
+model OrganizationStructure {
+  id           Int      @id @default(autoincrement())
+  academicYear Int      @map("academic_year")
+  leaderId     Int      @map("leader_id")
+  viceLeaderId Int      @map("vice_leader_id")
+  secretaryId  Int      @map("secretary_id")
+  treasurerId  Int      @map("treasurer_id")
+  isActive     Boolean  @default(false) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  leader       User     @relation("Leader", fields: [leaderId], references: [id], onDelete: Restrict)
+  viceLeader   User     @relation("ViceLeader", fields: [viceLeaderId], references: [id], onDelete: Restrict)
+  secretary    User     @relation("Secretary", fields: [secretaryId], references: [id], onDelete: Restrict)
+  treasurer    User     @relation("Treasurer", fields: [treasurerId], references: [id], onDelete: Restrict)
+
+  @@map("organization_structure")
+}
+
+model Post {
+  id          Int           @id @default(autoincrement())
+  title       String        @db.VarChar(255)
+  content     String        @db.Text
+  authorId    Int           @map("author_id")
+  imageUrl    String        @map("image_url") @db.VarChar(255)
+  status      POST_STATUS   @default(DRAFT)
+  publishedAt DateTime?     @map("published_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  category    POST_CATEGORY
+
+  // Relasi
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tags        PostTag[]
+
+  @@map("posts")
+}
+
+model Page {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  content     String   @db.Text
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+model Achievement {
+  id          Int      @id @default(autoincrement())
+  divisionId  Int      @map("division_id")
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  date        DateTime
+  imageUrl    String   @map("image_url") @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  division    Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique @db.VarChar(50)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  
+  // Relasi
+  posts     PostTag[]
+
+  @@map("tags")
+}
+
+model PostTag {
+  postId    Int      @map("post_id")
+  tagId     Int      @map("tag_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relasi
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
