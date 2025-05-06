@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown, User, LogIn, Activity, Book, Calendar, Info, Home } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogIn, Activity, Book, Calendar, Info, Home, Users, Image, FileCode, Phone } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,10 +56,14 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Beranda", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-    { name: "Tentang Kami", path: "/tentangkami", icon: <Info className="w-4 h-4 mr-2" /> },
-    { name: "Divisi", path: "/divisi", icon: <Activity className="w-4 h-4 mr-2" /> },
-    { name: "Acara", path: "/acara", icon: <Calendar className="w-4 h-4 mr-2" /> },
-    { name: "Blog", path: "/blog", icon: <Book className="w-4 h-4 mr-2" /> },
+    { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4 mr-2" /> },
+    { name: "Divisi", path: "/pages/divisi", icon: <Activity className="w-4 h-4 mr-2" /> },
+    { name: "Anggota", path: "/pages/anggota", icon: <Users className="w-4 h-4 mr-2" /> },
+    { name: "Galeri", path: "/pages/galeri", icon: <Image className="w-4 h-4 mr-2" /> },
+    { name: "Acara", path: "/pages/acara", icon: <Calendar className="w-4 h-4 mr-2" /> },
+    { name: "Proyek", path: "/pages/proyek", icon: <FileCode className="w-4 h-4 mr-2" /> },
+    { name: "Blog", path: "/pages/blog", icon: <Book className="w-4 h-4 mr-2" /> },
+    { name: "Kontak", path: "/pages/kontak", icon: <Phone className="w-4 h-4 mr-2" /> },
   ];
 
   const loginOptions = [
@@ -86,10 +90,10 @@ export default function Navbar() {
                   className="h-10 w-auto transition-all duration-300 group-hover:scale-110"
                   src="/logo-himsi.png"
                   alt="HIMSI Logo"
-                //   onError={(e) => {
-                //     e.target.onerror = null;
-                //     e.target.src = "https://via.placeholder.com/40";
-                //   }}
+                  // onError={(e) => {
+                  //   e.target.onerror = null;
+                  //   e.target.src = "https://via.placeholder.com/40";
+                  // }}
                 />
               </div>
               <span className={`ml-3 text-2xl font-bold tracking-tight ${
@@ -99,7 +103,7 @@ export default function Navbar() {
               </span>
             </Link>
             
-            <div className="hidden md:ml-10 md:flex md:items-center md:space-x-1">
+            <div className="hidden lg:ml-10 lg:flex lg:items-center lg:space-x-1">
               {navItems.map((item, idx) => (
                 <Link
                   key={idx}
@@ -154,7 +158,7 @@ export default function Navbar() {
             </div>
           </div>
           
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center">
             <button
               onClick={toggleMenu}
               className={`p-2 rounded-md focus:outline-none transition-colors duration-200 ${
@@ -172,13 +176,13 @@ export default function Navbar() {
 
       {/* Mobile menu with animation */}
       <div 
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           isMenuOpen 
-            ? "max-h-96 opacity-100" 
+            ? "max-h-screen opacity-100" 
             : "max-h-0 opacity-0"
         } ${scrolled ? "bg-white" : "bg-blue-800"}`}
       >
-        <div className="px-4 pt-2 pb-6 space-y-1">
+        <div className="px-4 pt-2 pb-6 space-y-1 max-h-[80vh] overflow-y-auto">
           {navItems.map((item, idx) => (
             <Link
               key={idx}

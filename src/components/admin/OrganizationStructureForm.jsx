@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useActionState } from 'react';
 import Link from 'next/link';
-import { addOrganizationStructure, updateOrganizationStructure } from '@/app/admin/organisasi/libs/action';
+import { addOrganizationStructure, updateOrganizationStructure } from '@/app/(roles)/admin/organisasi/libs/action';
 
 const initialState = {
   message: '',

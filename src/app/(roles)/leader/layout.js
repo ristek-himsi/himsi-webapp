@@ -1,6 +1,5 @@
 import { getUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import AdminNavbar from "@/components/admin/AdminNavbar";
 import LeaderNavbar from "@/components/admin/LeaderNavbar";
 
 export default async function AdminLayout({ children }) {

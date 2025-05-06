@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllDivisions } from "@/app/admin/divisions/libs/data";
+import { getAllDivisions } from "@/app/(roles)/admin/divisions/libs/data";
 
 export async function GET() {
   try {

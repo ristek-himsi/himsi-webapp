@@ -1,6 +1,6 @@
 import EditProgramForm from "@/components/admin/EditProgramForm";
 import React from "react";
-import { getAllDivisions } from "@/app/admin/divisions/libs/data";
+import { getAllDivisions } from "@/app/(roles)/admin/divisions/libs/data";
 import { getProgramById } from "../../libs/data";
 
 const page = async ({ params }) => {

@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
-import { deleteProgramAction } from '@/app/admin/programs/libs/action';
+import { deleteProgramAction } from '@/app/(roles)/admin/programs/libs/action';
 
 const initialState = {
   message: "",

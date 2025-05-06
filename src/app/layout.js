@@ -1,21 +1,21 @@
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
+// Initialize the Inter font
+const inter = Inter({ subsets: ["latin"] });
+
+// Metadata for the application
 export const metadata = {
   title: "HIMSI Web",
   description: "Website Resmi Himpunan Mahasiswa Sistem Informasi",
 };
 
+// Root layout component that wraps all pages
 export default function RootLayout({ children }) {
   return (
-    <html className="scroll-smooth">
-      <body className="font-inter text-gray-900 bg-gray-50">
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
+    <html lang="en">
+      <body className={inter.className}>
+        <main>{children}</main>
       </body>
     </html>
   );

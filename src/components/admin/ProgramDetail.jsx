@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/utils';
-import { deleteProgramAction } from '@/app/admin/programs/libs/action';
+import { deleteProgramAction } from '@/app/(roles)/admin/programs/libs/action';
 
 const isValidImageUrl = (url) => {
   return typeof url === 'string' && url.trim() !== '' && (url.startsWith('http') || url.startsWith('/'));
