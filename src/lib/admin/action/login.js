@@ -5,8 +5,7 @@ import { loginSchema } from "@/lib/schema";
 import bcrypt from "bcrypt";
 import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
-
+import prisma from "@/lib/prisma";
 export async function signIn(_, formData) {
   try {
     const validate = loginSchema.safeParse({
