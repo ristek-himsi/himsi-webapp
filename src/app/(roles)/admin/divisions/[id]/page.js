@@ -151,6 +151,7 @@ const DivisionDetailPage = ({ params }) => {
               <div key={member.id} className="border p-4 rounded-lg bg-gray-50">
                 <h3 className="font-bold">{member.name}</h3>
                 <p className="text-gray-600">{member.email}</p>
+                <p className="text-sm text-blue-600">{member.role === "ADMIN" ? "Admin" : member.role === "DIVISION_LEADER" ? "Pemimpin Divisi" : "Member"}</p>
                 <p className="text-sm text-gray-500 mt-1">Tergabung: {new Date(member.joinedAt).toLocaleDateString()}</p>
               </div>
             ))}

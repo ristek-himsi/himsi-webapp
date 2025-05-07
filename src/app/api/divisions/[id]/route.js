@@ -19,14 +19,15 @@ export async function GET(request, { params }) {
             email: true,
           },
         },
-        // members: {
-        //   select: {
-        //     id: true,
-        //     name: true,
-        //     email: true,
-        //     joinedAt: true,
-        //   },
-        // },
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+            role: true,
+          },
+        },
       },
     });
 
@@ -34,7 +35,22 @@ export async function GET(request, { params }) {
       return NextResponse.json({ success: false, message: "Divisi tidak ditemukan" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: division });
+    // Transformasi data untuk memberikan format yang konsisten dengan frontend
+    const formattedDivision = {
+      ...division,
+      members: division.users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        joinedAt: user.createdAt,
+        role: user.role,
+      })),
+    };
+
+    // Hapus properti users karena sudah diubah menjadi members
+    delete formattedDivision.users;
+
+    return NextResponse.json({ success: true, data: formattedDivision });
   } catch (error) {
     console.error("Error fetching division:", error);
     return NextResponse.json({ success: false, message: `Terjadi kesalahan: ${error.message}` }, { status: 500 });

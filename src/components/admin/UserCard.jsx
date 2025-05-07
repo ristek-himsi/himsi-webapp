@@ -93,7 +93,7 @@ const UserCard = ({ user }) => {
               user.role
             )}`}
           >
-            {user.role === "ADMIN" ? "Admin" : "Pemimpin Divisi"}
+           {user.role === "ADMIN" ? "Admin" : user.role === "DIVISION_LEADER" ? "Pemimpin Divisi" : "Member"}
           </div>
         </div>
       </div>
