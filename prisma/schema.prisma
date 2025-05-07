@@ -35,12 +35,6 @@ enum EVENT_STATUS {
   COMPLETED
 }
 
-enum SIFEST_ACTIVITY {
-  UPCOMING
-  ONGOING
-  COMPLETED
-}
-
 enum POST_CATEGORY {
   NEWS
   ANNOUNCEMENT
@@ -202,29 +196,9 @@ model SIFest {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relasi
-  activities  SIFestActivity[]
   events      Event[]
 
   @@map("sifest")
-}
-
-model SIFestActivity {
-  id          Int             @id @default(autoincrement())
-  sifestId    Int             @map("sifest_id")
-  name        String          @db.VarChar(100)
-  description String          @db.Text
-  imageUrl    String          @map("image_url") @db.VarChar(255)
-  startDate   DateTime        @map("start_date")
-  endDate     DateTime        @map("end_date")
-  location    String          @db.VarChar(100)
-  status      SIFEST_ACTIVITY
-  createdAt   DateTime        @default(now()) @map("created_at")
-  updatedAt   DateTime        @updatedAt @map("updated_at")
-
-  // Relasi
-  sifest      SIFest          @relation(fields: [sifestId], references: [id], onDelete: Cascade)
-
-  @@map("sifest_activities")
 }
 
 model OrganizationStructure {

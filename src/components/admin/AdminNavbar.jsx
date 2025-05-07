@@ -86,7 +86,7 @@ export default function AdminNavbar({ user }) {
     { name: "Events", href: "/admin/events" },
     { name: "Posts", href: "/admin/posts" },
     { name: "Halaman", href: "/admin/pages" },
-    { name: "Achievement", href: "/admin/achievement" },
+    { name: "Achievement", href: "/admin/achievements" },
     { name: "Alumni", href: "/admin/alumni" },
   ];
   
@@ -109,12 +109,12 @@ export default function AdminNavbar({ user }) {
           {/* Logo and primary nav */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-_CONTENT_              <Link href="/admin" className="flex items-center">
+             <Link href="/admin" className="flex items-center">
                 <Image
-                  src="/images/logo.png"
+                  src="/logo-himsi.png"
                   alt="HIMSI Logo"
-                  width={32}
-                  height={32}
+                  width={42}
+                  height={42}
                   className="h-8 w-auto"
                 />
                 <span className="ml-2 font-semibold text-xl text-gray-900 hidden sm:block">HIMSI Admin</span>

@@ -1,5 +1,6 @@
 import { ProgramsPage } from "@/components/admin/ProgramPage";
 import { getAllPrograms } from "./libs/data";
+import prisma from "@/lib/prisma";
 
 const Page = async () => {
   const programs = await getAllPrograms();

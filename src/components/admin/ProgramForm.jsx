@@ -62,7 +62,7 @@ const ProgramForm = ({ divisions }) => {
 
   return (
     <div className="space-y-4">
-      <form action={formAction} encType="multipart/form-data">
+      <form action={formAction}>
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">
