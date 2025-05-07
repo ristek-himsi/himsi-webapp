@@ -8,30 +8,22 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const navbarRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Ensure client-side mounting to prevent hydration mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Handle scroll effects
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 10);
     };
     
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -45,6 +37,7 @@ export default function Navbar() {
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
+    setIsDropdownOpen(false); // Close dropdown when toggling mobile menu
   };
 
   const toggleDropdown = (e) => {
@@ -74,7 +67,6 @@ export default function Navbar() {
 
   return (
     <nav 
-      ref={navbarRef}
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled 
           ? "bg-white text-blue-900 shadow-lg" 
@@ -82,7 +74,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center group">
               <div className="relative overflow-hidden rounded-full">
@@ -90,45 +82,41 @@ export default function Navbar() {
                   className="h-10 w-auto transition-all duration-300 group-hover:scale-110"
                   src="/logo-himsi.png"
                   alt="HIMSI Logo"
-                  // onError={(e) => {
-                  //   e.target.onerror = null;
-                  //   e.target.src = "https://via.placeholder.com/40";
-                  // }}
                 />
               </div>
-              <span className={`ml-3 text-2xl font-bold tracking-tight ${
+              <span className={`ml-3 text-xl font-bold tracking-tight md:text-2xl ${
                 scrolled ? "text-blue-900" : "text-white"
               }`}>
                 HIMSI
               </span>
             </Link>
-            
-            <div className="hidden lg:ml-10 lg:flex lg:items-center lg:space-x-1">
-              {navItems.map((item, idx) => (
-                <Link
-                  key={idx}
-                  href={item.path}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 flex items-center
-                    ${scrolled 
-                      ? "hover:bg-blue-100 hover:text-blue-800" 
-                      : "hover:bg-blue-600/70 hover:text-white"
-                    }`}
-                >
-                  {item.icon}
-                  {item.name}
-                </Link>
-              ))}
-            </div>
           </div>
-          
+
+          <div className="hidden lg:flex lg:items-center lg:ml-10 lg:space-x-2">
+            {navItems.map((item, idx) => (
+              <Link
+                key={idx}
+                href={item.path}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200
+                  ${scrolled 
+                    ? "hover:bg-blue-100 hover:text-blue-800" 
+                    : "hover:bg-blue-600/70 hover:text-white"
+                  }`}
+              >
+                {item.icon}
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
           <div className="flex items-center gap-2">
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative hidden lg:block" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
                 className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 ${
                   scrolled
                     ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20"
+                    : "bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
                 }`}
               >
                 <LogIn className="w-4 h-4 mr-2" />
@@ -156,12 +144,10 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-          </div>
-          
-          <div className="flex lg:hidden items-center">
+
             <button
               onClick={toggleMenu}
-              className={`p-2 rounded-md focus:outline-none transition-colors duration-200 ${
+              className={`lg:hidden p-2 rounded-md focus:outline-none transition-colors duration-200 ${
                 scrolled 
                   ? "text-blue-900 hover:bg-blue-100" 
                   : "text-white hover:bg-blue-600"
@@ -174,9 +160,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu with animation */}
       <div 
-        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`lg:hidden transition-all duration-300 ease-in-out ${
           isMenuOpen 
             ? "max-h-screen opacity-100" 
             : "max-h-0 opacity-0"
@@ -199,26 +184,21 @@ export default function Navbar() {
             </Link>
           ))}
           
-          <div className={`border-t pt-4 mt-4 ${scrolled ? "border-gray-200" : "border-blue-600"}`}>
-            <p className={`px-4 text-xs uppercase font-semibold mb-2 ${scrolled ? "text-gray-500" : "text-blue-300"}`}>
-              Login Options
-            </p>
-            {loginOptions.map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.path}
-                className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
-                  scrolled 
-                    ? "text-blue-900 hover:bg-blue-50" 
-                    : "text-white hover:bg-blue-700"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          {loginOptions.map((item, idx) => (
+            <Link
+              key={idx}
+              href={item.path}
+              className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
+                scrolled 
+                  ? "text-blue-900 hover:bg-blue-50" 
+                  : "text-white hover:bg-blue-700"
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>
