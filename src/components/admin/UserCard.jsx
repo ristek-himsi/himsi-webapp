@@ -19,7 +19,7 @@ const DeleteButton = () => {
     <Button
       size="sm"
       disabled={pending}
-      className="cursor-pointer"
+      className="cursor-pointer min-w-[80px]"
       variant="destructive"
     >
       <Trash className="h-3 w-3 mr-1" />
@@ -64,41 +64,37 @@ const UserCard = ({ user }) => {
       : getImageUrl(user.photo_url, "users")
     : null;
 
-  console.log("User ID:", user.id);
-  console.log("user.photo_url:", user?.photo_url);
-  console.log("photoUrl:", photoUrl);
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-center mb-4">
         <div className="bg-gray-200 rounded-full p-2 mr-3">
           {photoUrl ? (
             <img
               src={photoUrl}
               alt={user.name}
-              className="h-12 w-12 rounded-full object-cover"
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover"
               onError={(e) => {
                 console.error("Failed to load image:", photoUrl);
-                e.target.src = "/fallback-user.png";
+                e.target.src = "/images/fallback-user.png";
               }}
             />
           ) : (
-            <User className="h-8 w-8 text-gray-500" />
+            <User className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500" />
           )}
         </div>
         <div>
-          <h3 className="font-medium text-lg">{user.name}</h3>
+          <h3 className="font-medium text-base sm:text-lg">{user.name}</h3>
           <div
-            className={`inline-block px-2 py-1 text-xs rounded-full font-medium ${getRoleBadgeColor(
+            className={`inline-block px-2 py-1 text-xs sm:text-sm rounded-full font-medium ${getRoleBadgeColor(
               user.role
             )}`}
           >
-           {user.role === "ADMIN" ? "Admin" : user.role === "DIVISION_LEADER" ? "Pemimpin Divisi" : "Member"}
+            {user.role === "ADMIN" ? "Admin" : user.role === "DIVISION_LEADER" ? "Pemimpin Divisi" : "Member"}
           </div>
         </div>
       </div>
 
-      <div className="space-y-2 text-sm text-gray-600">
+      <div className="space-y-2 text-base text-gray-600">
         <div className="flex items-center">
           <Mail className="h-4 w-4 mr-2" />
           <span>{user.email}</span>
@@ -121,13 +117,12 @@ const UserCard = ({ user }) => {
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end space-x-2">
+      <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end space-x-3">
         <Link href={`/admin/users/${user.id}`}>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" className="min-w-[80px]">
             Edit
           </Button>
         </Link>
-
         <FormDelete userId={user.id} />
       </div>
     </div>

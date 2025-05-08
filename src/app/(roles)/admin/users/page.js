@@ -9,7 +9,7 @@ const AdminUsersPage = async () => {
   const users = await getAllUser();
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <ClientUsersFilter users={users} />
     </div>
   );

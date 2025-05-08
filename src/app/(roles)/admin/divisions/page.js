@@ -1,9 +1,10 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/supabase";
-import { UserIcon, FolderIcon } from "lucide-react"; // Import ikon
+import { UserIcon, FolderIcon } from "lucide-react";
 
 const DivisionsPage = () => {
   const [divisions, setDivisions] = useState([]);
@@ -55,7 +56,6 @@ const DivisionsPage = () => {
       const data = await res.json();
 
       if (data.success) {
-        // Remove the division from the state
         setDivisions(divisions.filter((div) => div.id !== divisionToDelete.id));
         handleCloseDeleteModal();
       } else {
@@ -66,49 +66,37 @@ const DivisionsPage = () => {
     }
   };
 
-  // Function to get the appropriate image URL
   const getDivisionImageUrl = (logoUrl) => {
-    if (!logoUrl) return "/placeholder-logo.png"; // Default placeholder if no logo
-
-    if (logoUrl.startsWith("http")) {
-      return logoUrl; // Already a complete URL
-    }
-
-    // Extract filename from path
+    if (!logoUrl) return "/placeholder-logo.png";
+    if (logoUrl.startsWith("http")) return logoUrl;
     const fileName = logoUrl.includes("/") ? logoUrl.split("/").pop() : logoUrl;
-
     return getImageUrl(fileName, "divisi");
   };
 
-  // Function to get user avatar
   const getUserAvatar = (photoUrl) => {
     if (!photoUrl) return "/placeholder-avatar.png";
-
-    if (photoUrl.startsWith("http")) {
-      return photoUrl;
-    }
-
+    if (photoUrl.startsWith("http")) return photoUrl;
     return getImageUrl(photoUrl, "users");
   };
 
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="mb-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Daftar Divisi</h1>
-          <div className="h-10 w-28 bg-gray-200 rounded"></div>
+      <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+        <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daftar Divisi</h1>
+          <div className="h-10 w-32 bg-blue-100 rounded-lg animate-pulse"></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="border rounded-lg p-6 bg-white shadow-sm">
-              <div className="animate-pulse flex flex-col space-y-4">
-                <div className="rounded-full bg-gray-200 h-12 w-12 mx-auto"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="flex space-x-2 justify-center">
-                  <div className="h-8 bg-gray-200 rounded w-16"></div>
-                  <div className="h-8 bg-gray-200 rounded w-16"></div>
+            <div key={index} className="border rounded-lg p-4 sm:p-5 bg-white shadow-md">
+              <div className="animate-pulse ease-in-out flex flex-col space-y-4">
+                <div className="rounded-full bg-blue-100 h-12 w-12 sm:h-16 sm:w-16 mx-auto"></div>
+                <div className="h-6 bg-blue-100 rounded w-3/4 mx-auto"></div>
+                <div className="h-4 bg-blue-100 rounded w-full"></div>
+                <div className="h-4 bg-blue-100 rounded w-full"></div>
+                <div className="flex space-x-3 justify-center">
+                  <div className="h-8 bg-blue-100 rounded w-20"></div>
+                  <div className="h-8 bg-blue-100 rounded w-20"></div>
                 </div>
               </div>
             </div>
@@ -120,78 +108,85 @@ const DivisionsPage = () => {
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
+      <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+        <div className="bg-red-50 shadow-md rounded-lg p-5 border border-red-200 text-red-900">
+          <p className="font-bold text-lg">Error</p>
+          <p className="text-base">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Daftar Divisi</h1>
-        <button onClick={() => router.push("/admin/divisions/create")} className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+      <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daftar Divisi</h1>
+        <button
+          onClick={() => router.push("/admin/divisions/create")}
+          className="bg-blue-900 text-white py-2 px-5 rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base w-full sm:w-auto text-center"
+        >
           Tambah Divisi
         </button>
       </div>
 
       {divisions.length === 0 ? (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-md">
-          <p>Tidak ada divisi yang ditemukan. Silakan tambah divisi baru.</p>
+        <div className="bg-yellow-50 shadow-md rounded-lg p-5 border border-yellow-200 text-yellow-900">
+          <p className="text-base">Tidak ada divisi yang ditemukan. Silakan tambah divisi baru.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {divisions.map((division) => (
-            <div key={division.id} className="border rounded-lg p-6 bg-white shadow-sm">
+            <div key={division.id} className="border rounded-lg p-4 sm:p-5 bg-white shadow-md hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center mb-4">
-                <div className="w-16 h-16 mb-2 relative">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 mb-3 relative">
                   <Image src={getDivisionImageUrl(division.logoUrl)} alt={`Logo ${division.name}`} fill className="object-contain" />
                 </div>
-                <h2 className="text-xl font-semibold text-center">{division.name}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 text-center">{division.name}</h2>
               </div>
 
-              <p className="text-gray-600 mb-4 text-sm line-clamp-3">{division.description}</p>
+              <p className="text-base text-gray-600 mb-4 line-clamp-4">{division.description}</p>
 
-              {/* Informasi ketua divisi */}
               {division.leader && (
-                <div className="flex items-center mt-4 mb-3 p-2 bg-blue-50 rounded-md">
-                  <div className="w-10 h-10 relative mr-3">
+                <div className="flex items-center mt-4 mb-3 p-3 bg-blue-100 rounded-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 relative mr-3">
                     <Image src={getUserAvatar(division.leader.photo_url)} alt={division.leader.name} fill className="object-cover rounded-full" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">{division.leader.name}</p>
-                    <p className="text-xs text-gray-500">Ketua Divisi</p>
+                    <p className="font-medium text-base">{division.leader.name}</p>
+                    <p className="text-sm text-gray-600">Ketua Divisi</p>
                   </div>
                 </div>
               )}
 
-              {/* Jumlah anggota dan program */}
               <div className="flex justify-between my-3">
                 <div className="flex items-center">
-                  <UserIcon size={16} className="text-gray-500 mr-1" />
-                  <span className="text-sm text-gray-600">
+                  <UserIcon size={16} className="text-blue-600 mr-1" />
+                  <span className="text-sm font-medium text-gray-700">
                     {division.memberCount} {division.memberCount === 1 ? "Anggota" : "Anggota"}
                   </span>
                 </div>
                 <div className="flex items-center">
-                  <FolderIcon size={16} className="text-gray-500 mr-1" />
-                  <span className="text-sm text-gray-600">
+                  <FolderIcon size={16} className="text-blue-600 mr-1" />
+                  <span className="text-sm font-medium text-gray-700">
                     {division.programCount} {division.programCount === 1 ? "Program" : "Program"}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 flex justify-center space-x-2">
-                <button onClick={() => router.push(`/admin/divisions/${division.id}`)} className="bg-blue-100 text-blue-700 py-1 px-3 rounded-md hover:bg-blue-200">
+              <div className="mt-4 flex justify-center space-x-3">
+                <button
+                  onClick={() => router.push(`/admin/divisions/${division.id}`)}
+                  className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
+                >
                   Detail
                 </button>
-                <button onClick={() => router.push(`/admin/divisions/${division.id}/edit`)} className="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-md hover:bg-yellow-200">
+                <button
+                  onClick={() => router.push(`/admin/divisions/${division.id}/edit`)}
+                  className="bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
+                >
                   Edit
                 </button>
-                <button onClick={() => handleOpenDeleteModal(division)} className="bg-red-100 text-red-700 py-1 px-3 rounded-md hover:bg-red-200">
+                <button onClick={() => handleOpenDeleteModal(division)} className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
                   Hapus
                 </button>
               </div>
@@ -200,17 +195,16 @@ const DivisionsPage = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Konfirmasi Hapus</h3>
-            <p className="mb-6">Apakah Anda yakin ingin menghapus divisi "{divisionToDelete?.name}"? Tindakan ini tidak dapat dibatalkan.</p>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-xl">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Konfirmasi Hapus</h3>
+            <p className="text-base text-gray-600 mb-6">Apakah Anda yakin ingin menghapus divisi "{divisionToDelete?.name}"? Tindakan ini tidak dapat dibatalkan.</p>
             <div className="flex justify-end space-x-3">
-              <button onClick={handleCloseDeleteModal} className="py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
+              <button onClick={handleCloseDeleteModal} className="py-2.5 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                 Batal
               </button>
-              <button onClick={handleDeleteDivision} className="py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700">
+              <button onClick={handleDeleteDivision} className="py-2.5 px-5 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                 Hapus
               </button>
             </div>
