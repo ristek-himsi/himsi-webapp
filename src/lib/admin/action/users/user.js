@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
-import { uploadImage } from "@/lib/supabase";
+import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 // Konfigurasi ukuran file maksimum (2MB)
@@ -57,7 +57,7 @@ export async function addUser(prevState, formData) {
     }
 
     // Handle photo upload
-    let photo_url = null;
+    let photo_url;
     if (photo && photo.size > 0) {
       if (photo.size > MAX_FILE_SIZE) {
         return { message: `Ukuran file terlalu besar. Maksimum ${MAX_FILE_SIZE / 1024 / 1024}MB.` };
@@ -136,6 +136,18 @@ export async function updateUser(prevState, formData, userId) {
       return { message: "Peran tidak valid" };
     }
 
+    const userExist = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!userExist) {
+      return {
+        message: "tidak ada usernya",
+      };
+    }
+
     if (divisionId) {
       const divisionExists = await prisma.division.findUnique({
         where: { id: parseInt(divisionId) },
@@ -168,6 +180,16 @@ export async function updateUser(prevState, formData, userId) {
       try {
         const fileName = await uploadImage(photo, "users");
         photo_url = fileName;
+
+        if (userExist.photo_url) {
+          try {
+            await deleteFile(userExist.photo_url, "users");
+            console.log("Old image deleted successfully");
+          } catch (deleteError) {
+            console.error("Error deleting old image:", deleteError);
+            // Continue with the update even if deletion fails
+          }
+        }
       } catch (error) {
         console.error("Error uploading photo:", error);
         return { message: "Gagal mengunggah foto. Silakan coba lagi." };

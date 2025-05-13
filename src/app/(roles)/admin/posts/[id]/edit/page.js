@@ -140,7 +140,7 @@ const EditPostPage = ({ params }) => {
           </label>
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 relative border rounded-md overflow-hidden bg-gray-100">
-              <Image src={getPostImageUrl(post.imageUrl)} alt="Gambar Postingan" fill className="object-contain" />
+              <Image src={getImageUrl(post?.imageUrl, "posts")} alt="Gambar Postingan" fill className="object-contain" />
             </div>
             <input type="file" id="imageUrl" name="imageUrl" className="border rounded-md p-2" />
           </div>

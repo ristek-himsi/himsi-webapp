@@ -58,10 +58,7 @@ const getRoleBadgeColor = (role) => {
 };
 
 const UserCard = ({ user }) => {
-  const photoUrl = user?.photo_url
-    ? user.photo_url.startsWith("http")
-      ? user.photo_url
-      : getImageUrl(user.photo_url, "users")
+  const photoUrl = user?.photo_url ? getImageUrl(user.photo_url, "users")
     : null;
 
   return (
@@ -73,10 +70,6 @@ const UserCard = ({ user }) => {
               src={photoUrl}
               alt={user.name}
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover"
-              onError={(e) => {
-                console.error("Failed to load image:", photoUrl);
-                e.target.src = "/images/fallback-user.png";
-              }}
             />
           ) : (
             <User className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500" />

@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 // Import components
 import { Button } from "@/components/ui/button";
 // Import actions
-import { logout } from "@/lib/admin/action/logout";
+import { logoutLeader } from "@/lib/admin/action/logout";
 // Import icons from lucide-react
 import { Menu, User, LogOut, ChevronDown, X } from "lucide-react";
 
@@ -35,7 +35,7 @@ const SubmitButton = () => {
 const FormLogout = () => {
   const [state, formAction] = useActionState(async (prevState, formData) => {
     console.log("Logout form submitted");
-    return await logout(prevState, formData);
+    return await logoutLeader(prevState, formData);
   }, initialState);
   
   return (
@@ -91,11 +91,11 @@ export default function LeaderNavbar({ user }) {
   
   // Navigation items for Division Leaders
   const navItems = [
-    { name: "Dashboard", href: "/admin" },
-    { name: "Organization", href: "/admin/organisasi" },
-    { name: "Divisions", href: "/admin/divisions" },
-    { name: "Programs", href: "/admin/programs" },
-    { name: "Achievement", href: "/admin/achievement" },
+    { name: "Dashboard", href: "/leader" },
+    { name: "Organization", href: "/leader/organisasi" },
+    { name: "Members", href: "/leader/members" },
+    { name: "Programs", href: "/leader/programs" },
+    { name: "Achievement", href: "/leader/achievement" },
   ];
   
   // Close mobile menu on screen resize
@@ -119,7 +119,7 @@ export default function LeaderNavbar({ user }) {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/admin" className="flex items-center">
                 <Image
-                  src="/images/logo.png"
+                  src="/logo-himsi.png"
                   alt="HIMSI Logo"
                   width={32}
                   height={32}

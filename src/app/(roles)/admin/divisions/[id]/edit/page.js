@@ -77,6 +77,8 @@ const EditDivisionPage = ({ params }) => {
     return getImageUrl(fileName, "divisi");
   };
 
+  const divisionImagePreview = getImageUrl(division?.logoUrl, "divisi");
+
   if (loading) {
     return (
       <div className="p-6 max-w-2xl mx-auto">
@@ -151,7 +153,7 @@ const EditDivisionPage = ({ params }) => {
           </label>
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 relative border rounded-md overflow-hidden bg-gray-100">
-              <Image src={getDivisionImageUrl(division.logoUrl)} alt="Logo Divisi" fill className="object-contain" />
+              <Image src={divisionImagePreview} alt="Logo Divisi" fill className="object-contain" />
             </div>
             <input type="file" id="logoUrl" name="logoUrl" className="border rounded-md p-2" />
           </div>

@@ -5,14 +5,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
+import { getImageUrl } from "@/lib/supabase";
 
 // Program Card Component
 export const ProgramCard = ({ program }) => {
+  const previewImage = getImageUrl(program.imageUrl, "programs")
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 w-full">
         <Image
-          src={program.imageUrl || "/placeholder-image.jpg"}
+          src={previewImage || "/placeholder-image.jpg"}
           alt={program.name}
           fill
           className="object-cover"

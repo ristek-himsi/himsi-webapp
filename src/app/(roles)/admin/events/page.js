@@ -31,20 +31,6 @@ export default function EventsAdminPage() {
   }, []);
 
   // Fungsi untuk hapus event
-  const handleDelete = async (eventId) => {
-    if (!confirm("Apakah kamu yakin ingin menghapus event ini?")) return;
-
-    try {
-      await deleteEvent(eventId);
-      setEvents(events.filter((event) => event.id !== eventId));
-      setNotification({ type: "success", message: "Event berhasil dihapus!" });
-      setTimeout(() => setNotification(null), 3000);
-    } catch (err) {
-      console.error("Gagal menghapus event:", err);
-      setNotification({ type: "error", message: "Gagal menghapus event. Coba lagi." });
-      setTimeout(() => setNotification(null), 3000);
-    }
-  };
 
   // Filter events berdasarkan type, status, dan search query
   const filteredEvents = events.filter((event) => {
@@ -129,7 +115,7 @@ export default function EventsAdminPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((event) => (
-            <EventCard key={event.id} event={event} onDelete={() => handleDelete(event.id)} />
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       )}

@@ -36,7 +36,7 @@ export default function EditEventPage({ params }) {
 
         // Hapus gambar lama jika ada
         if (event.imageUrl) {
-          const oldFileName = event.imageUrl.includes("/") ? event.imageUrl.split("/").pop() : event.imageUrl;
+          const oldFileName = getImageUrl(event?.imageUrl, "events");
           await deleteFile(oldFileName, "events");
         }
       }
@@ -97,18 +97,20 @@ export default function EditEventPage({ params }) {
   }, [id]);
 
   // Function to get the appropriate image URL
-  const getEventImageUrl = (imageUrl) => {
-    if (!imageUrl) return "/placeholder-image.jpg"; // Default placeholder if no image
+  // const getEventImageUrl = (imageUrl) => {
+  //   if (!imageUrl) return "/placeholder-image.jpg"; // Default placeholder if no image
 
-    if (imageUrl.startsWith("http")) {
-      return imageUrl; // Already a complete URL
-    }
+  //   if (imageUrl.startsWith("http")) {
+  //     return imageUrl; // Already a complete URL
+  //   }
 
-    // Extract filename to handle paths like events/xxx.png
-    const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
+  //   // Extract filename to handle paths like events/xxx.png
+  //   const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
 
-    return getImageUrl(fileName, "events");
-  };
+  //   return getImageUrl(fileName, "events");
+  // };
+
+  const eventImagePreview = getImageUrl(event?.imageUrl, "events");
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -225,15 +227,7 @@ export default function EditEventPage({ params }) {
           </label>
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 relative border rounded-md overflow-hidden bg-gray-100">
-              <Image
-                src={getEventImageUrl(event.imageUrl)}
-                alt="Gambar Event"
-                fill
-                className="object-contain"
-                onError={(e) => {
-                  e.target.src = "/placeholder-image.jpg";
-                }}
-              />
+              <Image src={eventImagePreview} alt="Gambar Event" fill className="object-contain" />
             </div>
             <input type="file" id="imageUrl" name="imageUrl" accept="image/*" onChange={handleImageChange} className="border rounded-md p-2" />
           </div>

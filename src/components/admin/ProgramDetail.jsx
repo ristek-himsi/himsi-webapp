@@ -6,10 +6,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/utils';
 import { deleteProgramAction } from '@/app/(roles)/admin/programs/libs/action';
+import { getImageUrl } from '@/lib/supabase';
 
-const isValidImageUrl = (url) => {
-  return typeof url === 'string' && url.trim() !== '' && (url.startsWith('http') || url.startsWith('/'));
-};
+const isValidImageUrl = true
 
 const ProgramDetail = ({ program }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -47,9 +46,9 @@ const ProgramDetail = ({ program }) => {
     <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Program Header */}
       <div className="relative h-64 w-full">
-        {isValidImageUrl(program.imageUrl) ? (
+        {isValidImageUrl ? (
           <Image
-            src={program.imageUrl}
+            src={getImageUrl(program?.imageUrl , "programs")}
             alt={program.name}
             fill
             className="object-cover"
@@ -114,10 +113,10 @@ const ProgramDetail = ({ program }) => {
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
               <h3 className="text-lg font-medium mb-3 text-gray-800">Informasi Divisi</h3>
               <div className="flex items-center mb-4">
-                {program.division && isValidImageUrl(program.division.logoUrl) ? (
+                {program.division && isValidImageUrl ? (
                   <div className="relative h-12 w-12 mr-3 rounded-full overflow-hidden">
                     <Image
-                      src={program.division.logoUrl}
+                      src={getImageUrl(program.division.logoUrl, "divisi")}
                       alt={program.division.name}
                       fill
                       className="object-cover"

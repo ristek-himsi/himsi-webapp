@@ -164,25 +164,6 @@ model EventGallery {
   @@map("event_gallery")
 }
 
-// Model alumni
-model Alumni {
-  id             Int      @id @default(autoincrement())
-  name           String   @db.VarChar(100)
-  email          String   @unique @db.VarChar(100)
-  bio            String   @db.Text
-  positionInHimsi Json    @map("position_in_himsi")
-  profileImage   String   @map("profile_image") @db.VarChar(255)
-  graduationYear Int      @map("graduation_year")
-  entryYear      Int      @map("entry_year")
-  currentJob     String   @map("current_job") @db.VarChar(100)
-  company        String   @db.VarChar(100)
-  linkedinUrl    String   @map("linkedin_url") @db.VarChar(255)
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-
-  @@map("alumni")
-}
-
 // Model SIFest
 model SIFest {
   id          Int      @id @default(autoincrement())

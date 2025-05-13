@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { deleteFile } from "@/lib/supabase";
 
 export async function GET(request, { params }) {
   try {
@@ -78,6 +79,15 @@ export async function DELETE(request, { params }) {
     await prisma.division.delete({
       where: { id },
     });
+
+    if (existingDivision.logoUrl) {
+      try {
+        await deleteFile(existingDivision.logoUrl, "divisi");
+        console.log("gambar divisi di storage berhasil dihapus");
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
     return NextResponse.json({
       success: true,

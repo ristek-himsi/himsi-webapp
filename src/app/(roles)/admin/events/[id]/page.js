@@ -12,6 +12,7 @@ export default function EventDetailPage({ params }) {
   const unwrappedParams = React.use(params);
   const id = parseInt(unwrappedParams.id);
   const [event, setEvent] = useState(null);
+  // console.log(event);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddGallery, setShowAddGallery] = useState(false);
@@ -36,22 +37,26 @@ export default function EventDetailPage({ params }) {
   }
 
   // Function to get the appropriate image URL
-  const getEventImageUrl = (imageUrl) => {
-    if (!imageUrl) {
-      return "/placeholder-image.jpg";
-    }
+  // const getEventImageUrl = (imageUrl) => {
+  //   if (!imageUrl) {
+  //     return "/placeholder-image.jpg";
+  //   }
 
-    // If the imageUrl already contains the full URL, return it directly
-    if (imageUrl.startsWith("http")) {
-      return imageUrl;
-    }
+  //   // If the imageUrl already contains the full URL, return it directly
+  //   if (imageUrl.startsWith("http")) {
+  //     return imageUrl;
+  //   }
 
-    // Extract just the filename if it contains a path
-    const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
+  //   // Extract just the filename if it contains a path
+  //   const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
 
-    // Use the getImageUrl function to get the complete URL
-    return getImageUrl(fileName, "events");
-  };
+  //   // Use the getImageUrl function to get the complete URL
+  //   return getImageUrl(fileName, "events");
+  // };
+
+  const eventImagePreview = getImageUrl(event?.imageUrl, "events");
+
+  const eventGalleryImagePreview = getImageUrl(event?.gallery?.imageUrl, "events");
 
   // Callback untuk refresh data setelah menambahkan gambar
   const handleGalleryAddSuccess = () => {
@@ -87,7 +92,7 @@ export default function EventDetailPage({ params }) {
   const formattedEndDate = format(new Date(event.endDate), "MMM d, yyyy");
 
   // Get image URL from Supabase or use placeholder
-  const mainImage = event.imageUrl ? getEventImageUrl(event.imageUrl) : event.gallery && event.gallery.length > 0 && event.gallery[0].imageUrl ? getEventImageUrl(event.gallery[0].imageUrl) : "/placeholder-image.jpg";
+  // const mainImage = event.imageUrl ? eventImagePreview : event.gallery && event.gallery.length > 0 && event.gallery[0].imageUrl ? getEventImageUrl(event.gallery[0].imageUrl) : "/placeholder-image.jpg";
 
   return (
     <div className="min-h-screen p-6">
@@ -136,17 +141,7 @@ export default function EventDetailPage({ params }) {
           <div>
             <h2 className="text-lg font-semibold mb-2">Gambar Utama</h2>
             <div className="relative h-48 w-full mb-4">
-              <Image
-                src={mainImage}
-                alt={event.name}
-                width={400}
-                height={200}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                className="rounded-md"
-                onError={(e) => {
-                  e.target.src = "/placeholder-image.jpg";
-                }}
-              />
+              <Image src={eventImagePreview} alt={event.name} width={400} height={200} style={{ objectFit: "cover", width: "100%", height: "100%" }} className="rounded-md" />
             </div>
           </div>
         </div>
@@ -167,17 +162,7 @@ export default function EventDetailPage({ params }) {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
             {event.gallery.map((image) => (
               <div key={image.id} className="relative h-32 w-full">
-                <Image
-                  src={image.imageUrl ? getEventImageUrl(image.imageUrl) : "/placeholder-image.jpg"}
-                  alt={image.caption || "Galeri event"}
-                  width={200}
-                  height={128}
-                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                  className="rounded-md"
-                  onError={(e) => {
-                    e.target.src = "/placeholder-image.jpg";
-                  }}
-                />
+                <Image src={getImageUrl(image?.imageUrl, "events")} alt={image.caption || "Galeri event"} width={200} height={128} style={{ objectFit: "cover", width: "100%", height: "100%" }} className="rounded-md" />
                 {image.caption && <p className="text-xs text-gray-600 mt-1 line-clamp-1">{image.caption}</p>}
               </div>
             ))}

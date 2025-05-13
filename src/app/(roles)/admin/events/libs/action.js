@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { uploadImage } from "@/lib/supabase";
+import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 // Konfigurasi ukuran file maksimum (2MB)
@@ -17,7 +17,7 @@ export async function addEventAction(prevState, formData) {
     const startDate = formData.get("startDate");
     const endDate = formData.get("endDate");
     const location = formData.get("location");
-    const academicYear = formData.get("academicYear");
+    const academicYear = parseInt(formData.get("academicYear"));
     const type = formData.get("type");
     const status = formData.get("status");
     const sifestId = formData.get("sifestId") || null;
@@ -42,7 +42,7 @@ export async function addEventAction(prevState, formData) {
 
       try {
         const fileName = await uploadImage(imageFile, "events");
-        imageUrl = `events/${fileName}`;
+        imageUrl = fileName;
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload gambar. Silakan coba lagi." };
@@ -59,10 +59,12 @@ export async function addEventAction(prevState, formData) {
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       location,
-      academicYear: parseInt(academicYear),
+      academicYear,
       type,
       status,
     };
+
+    console.log(eventData);
 
     // Add SIFest relation if type is SIFEST and sifestId is provided
     if (type === "SIFEST" && sifestId) {
@@ -163,7 +165,7 @@ export async function updateEventAction(prevState, formData, eventId) {
 
       try {
         const fileName = await uploadImage(imageFile, "events");
-        eventData.imageUrl = `events/${fileName}`;
+        eventData.imageUrl = fileName;
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload gambar. Silakan coba lagi." };
@@ -239,7 +241,7 @@ export async function addEventGalleryImagesAction(formData, eventId) {
       try {
         const fileName = await uploadImage(file, "events");
         uploadedImages.push({
-          imageUrl: `events/${fileName}`,
+          imageUrl: fileName,
           caption: caption,
         });
       } catch (uploadError) {
@@ -275,6 +277,80 @@ export async function addEventGalleryImagesAction(formData, eventId) {
     return {
       success: false,
       message: `Gagal menambahkan gambar: ${error.message}`,
+    };
+  }
+}
+
+export async function deleteEventAction(_, formData, id) {
+  const eventId = parseInt(id);
+
+  try {
+    // Find the event to be deleted
+    const existingEvent = await prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      include: {
+        // Include gallery images to get their URLs for deletion
+        gallery: true,
+      },
+    });
+
+    if (!existingEvent) {
+      return { message: "eventnya gak ada" };
+    }
+
+    // Delete all associated gallery images from storage
+    if (existingEvent.gallery && existingEvent.gallery.length > 0) {
+      console.log(`Deleting ${existingEvent.gallery.length} gallery images from storage`);
+
+      for (const galleryItem of existingEvent.gallery) {
+        if (galleryItem.imageUrl) {
+          try {
+            const filename = galleryItem.imageUrl;
+            if (filename) {
+              await deleteFile(filename, "events");
+              console.log(`Berhasil menghapus gambar galeri: ${filename}`);
+            }
+          } catch (err) {
+            console.log(`Error deleting gallery image: ${err}`);
+          }
+        }
+      }
+    }
+
+    // Delete event's main image from storage if exists
+    if (existingEvent.imageUrl) {
+      try {
+        const filename = existingEvent.imageUrl;
+        if (filename) {
+          await deleteFile(filename, "events");
+          console.log("Berhasil menghapus gambar event di storage");
+        }
+      } catch (e) {
+        console.log("Error deleting event image:", e);
+      }
+    }
+
+    // Delete the event (this will cascade and delete gallery entries in database)
+    await prisma.event.delete({
+      where: {
+        id: eventId,
+      },
+    });
+
+    revalidatePath("/admin/events");
+
+    return {
+      message: "berhasil menghapus event dan semua galeri terkait",
+      success: true,
+      redirectUrl: "/admin/events",
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      message: "gagal menghapus event",
+      success: false,
     };
   }
 }

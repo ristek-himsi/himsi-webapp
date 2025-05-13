@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, Eye } from "lucide-react";
+import DeleteAchievementForm from "./components/DeleteAchievementForm";
+import { getImageUrl } from "@/lib/supabase";
 
 const AchievementsPage = () => {
   const [achievements, setAchievements] = useState([]);
@@ -33,37 +35,6 @@ const AchievementsPage = () => {
     fetchAchievements();
   }, []);
 
-  const handleOpenDeleteModal = (achievement) => {
-    setAchievementToDelete(achievement);
-    setDeleteModalOpen(true);
-  };
-
-  const handleCloseDeleteModal = () => {
-    setDeleteModalOpen(false);
-    setAchievementToDelete(null);
-  };
-
-  const handleDeleteAchievement = async () => {
-    if (!achievementToDelete) return;
-
-    try {
-      const res = await fetch(`/api/achievements/${achievementToDelete.id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setAchievements(achievements.filter((ach) => ach.id !== achievementToDelete.id));
-        handleCloseDeleteModal();
-      } else {
-        setError(data.message || "Gagal menghapus pencapaian");
-      }
-    } catch (err) {
-      setError("Terjadi kesalahan saat menghapus pencapaian: " + err.message);
-    }
-  };
-
   if (loading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
@@ -91,6 +62,9 @@ const AchievementsPage = () => {
           <div role="table" aria-describedby="achievements-table" className="min-w-full divide-y divide-gray-200">
             <div role="rowgroup" className="bg-blue-50">
               <div role="row" className="flex">
+                <div role="columnheader" className="px-4 py-3 text-left text-sm font-semibold text-blue-900 w-20">
+                  Gambar
+                </div>
                 <div role="columnheader" className="px-4 py-3 text-left text-sm font-semibold text-blue-900 flex-1">
                   Judul
                 </div>
@@ -108,6 +82,9 @@ const AchievementsPage = () => {
             <div role="rowgroup">
               {[...Array(3)].map((_, index) => (
                 <div key={index} role="row" className="flex">
+                  <div role="cell" className="px-4 py-3 w-20">
+                    <div className="h-12 w-12 bg-blue-100 rounded animate-pulse"></div>
+                  </div>
                   <div role="cell" className="px-4 py-3 flex-1">
                     <div className="h-4 bg-blue-100 rounded w-3/4 animate-pulse"></div>
                   </div>
@@ -159,30 +136,26 @@ const AchievementsPage = () => {
         </div>
       ) : (
         <div className="sm:hidden space-y-4">
-          {achievements.map((achievement) => (
-            <div key={achievement.id} className="bg-white shadow-md p-4 rounded-lg hover:shadow-lg transition-shadow">
-              <h3 className="text-base font-semibold text-gray-900">{achievement.title}</h3>
-              <p className="text-sm text-gray-600 mt-1">Divisi: {achievement.division?.name}</p>
-              <p className="text-sm text-gray-600 mt-1">Tanggal: {new Date(achievement.date).toLocaleDateString()}</p>
-              <div className="mt-3 flex space-x-3">
-                <button
-                  onClick={() => router.push(`/admin/achievements/${achievement.id}`)}
-                  className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
-                >
-                  <Eye className="w-4 h-4 mr-1" /> Detail
-                </button>
-                <button
-                  onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
-                  className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
-                >
-                  <Pencil className="w-4 h-4 mr-1" /> Edit
-                </button>
-                <button onClick={() => handleOpenDeleteModal(achievement)} className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center">
-                  <Trash2 className="w-4 h-4 mr-1" /> Hapus
-                </button>
+          {achievements.map((achievement) => {
+            const AchievementPreviewImage = achievement.imageUrl ? getImageUrl(achievement.imageUrl, "achievements") : "/placeholder-image.jpg";
+            return (
+              <div key={achievement.id} className="bg-white shadow-md p-4 rounded-lg hover:shadow-lg transition-shadow">
+                <img src={AchievementPreviewImage} alt={achievement.title} className="w-full h-32 object-cover rounded-md mb-3" />
+                <h3 className="text-base font-semibold text-gray-900">{achievement.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">Divisi: {achievement.division?.name}</p>
+                <p className="text-sm text-gray-600 mt-1">Tanggal: {new Date(achievement.date).toLocaleDateString()}</p>
+                <div className="mt-3 flex space-x-3">
+                  <button
+                    onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+                  >
+                    <Pencil className="w-4 h-4 mr-1" /> Edit
+                  </button>
+                  <DeleteAchievementForm id={achievement?.id} />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -191,6 +164,9 @@ const AchievementsPage = () => {
           <div role="table" aria-describedby="achievements-table" className="min-w-full divide-y divide-gray-200">
             <div role="rowgroup" className="bg-blue-50">
               <div role="row" className="flex">
+                <div role="columnheader" className="px-4 py-3 text-left text-sm font-semibold text-blue-900 w-20">
+                  Gambar
+                </div>
                 <div role="columnheader" className="px-4 py-3 text-left text-sm font-semibold text-blue-900 flex-1">
                   Judul
                 </div>
@@ -206,39 +182,34 @@ const AchievementsPage = () => {
               </div>
             </div>
             <div role="rowgroup">
-              {achievements.map((achievement) => (
-                <div key={achievement.id} role="row" className="flex odd:bg-white even:bg-blue-25 hover:bg-blue-100 transition-colors">
-                  <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
-                    {achievement.title}
+              {achievements.map((achievement) => {
+                const AchievementPreviewImage = achievement.imageUrl ? getImageUrl(achievement.imageUrl, "achievements") : "/placeholder-image.jpg";
+                return (
+                  <div key={achievement.id} role="row" className="flex odd:bg-white even:bg-blue-25 hover:bg-blue-100 transition-colors">
+                    <div role="cell" className="px-4 py-3 w-20">
+                      <img src={AchievementPreviewImage} alt={achievement.title} className="w-12 h-12 object-cover rounded" />
+                    </div>
+                    <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
+                      {achievement.title}
+                    </div>
+                    <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
+                      {achievement.division?.name}
+                    </div>
+                    <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
+                      {new Date(achievement.date).toLocaleDateString()}
+                    </div>
+                    <div role="cell" className="px-4 py-3 flex space-x-3 flex-1">
+                      <button
+                        onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
+                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+                      >
+                        <Pencil className="w-4 h-4 mr-1" /> Edit
+                      </button>
+                      <DeleteAchievementForm id={achievement?.id} />
+                    </div>
                   </div>
-                  <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
-                    {achievement.division?.name}
-                  </div>
-                  <div role="cell" className="px-4 py-3 text-base text-gray-900 flex-1">
-                    {new Date(achievement.date).toLocaleDateString()}
-                  </div>
-                  <div role="cell" className="px-4 py-3 flex space-x-3 flex-1">
-                    <button
-                      onClick={() => router.push(`/admin/achievements/${achievement.id}`)}
-                      className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
-                    >
-                      <Eye className="w-4 h-4 mr-1" /> Detail
-                    </button>
-                    <button
-                      onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
-                      className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
-                    >
-                      <Pencil className="w-4 h-4 mr-1" /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleOpenDeleteModal(achievement)}
-                      className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
-                    >
-                      <Trash2 className="w-4 h-4 mr-1" /> Hapus
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

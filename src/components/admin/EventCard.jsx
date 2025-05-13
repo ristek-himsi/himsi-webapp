@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/supabase";
+import DeleteEventForm from "@/app/(roles)/admin/events/components/DeleteEventForm";
 
 const EventStatusBadge = ({ status }) => {
   let bgColor;
@@ -30,7 +31,7 @@ const EventStatusBadge = ({ status }) => {
   );
 };
 
-const EventCard = ({ event, onDelete }) => {
+const EventCard = ({ event }) => {
   // Format dates
   const formattedStartDate = format(new Date(event.startDate), "MMM d, yyyy");
   const formattedEndDate = format(new Date(event.endDate), "MMM d, yyyy");
@@ -43,6 +44,8 @@ const EventCard = ({ event, onDelete }) => {
     return getImageUrl(fileName, "events");
   };
 
+  const eventImagePreview = getEventImageUrl(event?.imageUrl, "events")
+
   const displayImage =
     event.gallery && event.gallery.length > 0 && event.gallery[0].imageUrl
       ? getEventImageUrl(event.gallery[0].imageUrl)
@@ -54,15 +57,12 @@ const EventCard = ({ event, onDelete }) => {
     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border">
       <div className="relative h-48 w-full">
         <Image
-          src={displayImage}
+          src={eventImagePreview}
           alt={event.name || "Event"}
           width={400}
           height={200}
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
           className="transition-transform hover:scale-105"
-          onError={(e) => {
-            e.target.src = "/placeholder-image.jpg";
-          }}
         />
         <div className="absolute top-2 left-2">
           <EventStatusBadge status={event.status} />
@@ -181,26 +181,7 @@ const EventCard = ({ event, onDelete }) => {
               </svg>
             </Link>
 
-            <button
-              onClick={onDelete}
-              className="text-red-500 hover:text-red-700"
-              title="Hapus event"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                ></path>
-              </svg>
-            </button>
+           <DeleteEventForm id={event.id} />
           </div>
         </div>
       </div>

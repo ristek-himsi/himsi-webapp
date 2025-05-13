@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useActionState } from "react";
 import { addEventAction } from "../libs/action";
 import { useRouter } from "next/navigation";
 
 const initialState = {
   message: "",
-  success: false,
 };
 
 const EventForm = () => {
   const router = useRouter();
   const [state, formAction] = useActionState(addEventAction, initialState);
+  const [siFest, setSiFest] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Redirect jika operasi berhasil
   useEffect(() => {
@@ -20,6 +21,23 @@ const EventForm = () => {
       router.push(state.redirectUrl);
     }
   }, [state, router]);
+
+  useEffect(() => {
+    const fetchingData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetch("/api/sifest");
+        const res = await data.json();
+        setSiFest(res);
+      } catch (error) {
+        console.error("Error fetching SIFest data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchingData();
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -137,8 +155,30 @@ const EventForm = () => {
             <label htmlFor="sifestId" className="block text-sm font-medium text-gray-700 mb-1">
               SIFest ID <span className="text-red-500">*</span>
             </label>
-            <input type="number" id="sifestId" name="sifestId" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ID SIFest" />
-            <p className="text-xs text-gray-500 mt-1">*Wajib diisi jika tipe event adalah SIFEST</p>
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
+                <span className="text-sm text-gray-500">Memuat data SIFest...</span>
+              </div>
+            ) : (
+              <>
+                <select id="sifestId" name="sifestId" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" required>
+                  <option value="sifestId">-- Pilih SIFest --</option>
+                  {siFest && siFest.length > 0 ? (
+                    siFest.map((fest) => (
+                      <option key={fest.id} value={fest.id}>
+                        SIFest {fest.year} - {fest.theme}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>
+                      Tidak ada data SIFest tersedia
+                    </option>
+                  )}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">*Wajib diisi jika tipe event adalah SIFEST</p>
+              </>
+            )}
           </div>
         </div>
 

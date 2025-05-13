@@ -73,6 +73,8 @@ const PostsPage = () => {
     return getImageUrl(fileName, "posts");
   };
 
+  const postImagePreview = getImageUrl(posts?.imageUrl, "posts");
+
   const getUserAvatar = (photoUrl) => {
     if (!photoUrl) return "/placeholder-avatar.png";
     if (photoUrl.startsWith("http")) return photoUrl;
@@ -139,7 +141,7 @@ const PostsPage = () => {
             <div key={post.id} className="border rounded-lg p-4 sm:p-5 bg-white shadow-md hover:shadow-lg transition-shadow">
               <div className="mb-4">
                 <div className="w-full h-24 relative">
-                  <Image src={getPostImageUrl(post.imageUrl)} alt={post.title} fill className="object-cover rounded" />
+                  <Image src={getImageUrl(post?.imageUrl, "posts")} alt={post.title} fill className="object-cover rounded" />
                 </div>
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mt-3">{post.title}</h2>
               </div>
@@ -148,7 +150,7 @@ const PostsPage = () => {
 
               <div className="flex items-center mt-4 mb-3 p-3 bg-blue-100 rounded-lg">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 relative mr-3">
-                  <Image src={getUserAvatar(post.author.photo_url)} alt={post.author.name} fill className="object-cover rounded-full" />
+                  <Image src={getImageUrl(post?.author?.photo_url, "users")} alt={post.author.name} fill className="object-cover rounded-full" />
                 </div>
                 <div>
                   <p className="font-medium text-base">{post.author.name}</p>

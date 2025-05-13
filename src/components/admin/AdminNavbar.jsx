@@ -87,7 +87,6 @@ export default function AdminNavbar({ user }) {
     { name: "Posts", href: "/admin/posts" },
     { name: "Halaman", href: "/admin/pages" },
     { name: "Achievement", href: "/admin/achievements" },
-    { name: "Alumni", href: "/admin/alumni" },
   ];
   
   // Close mobile menu on screen resize

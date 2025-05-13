@@ -64,7 +64,7 @@ export default function AddEventGalleryForm({ eventId, onSuccess }) {
       const uploadPromises = images.map(async (image) => {
         const fileName = await uploadImage(image.file, "events");
         return {
-          imageUrl: `events/${fileName}`,
+          imageUrl: fileName,
           caption: image.caption || ""
         };
       });

@@ -59,12 +59,14 @@ const EditAchievementPage = ({ params }) => {
     fetchData();
   }, [id]);
 
-  const getAchievementImageUrl = (imageUrl) => {
-    if (!imageUrl) return "/placeholder-achievement.png";
-    if (imageUrl.startsWith("http")) return imageUrl;
-    const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
-    return getImageUrl(fileName, "achievements");
-  };
+  // const getAchievementImageUrl = (imageUrl) => {
+  //   if (!imageUrl) return "/placeholder-achievement.png";
+  //   if (imageUrl.startsWith("http")) return imageUrl;
+  //   const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
+  //   return getImageUrl(fileName, "achievements");
+  // };
+
+  const imagePreview = getImageUrl(achievement?.imageUrl, "achievements");
 
   if (loading) {
     return (
@@ -160,7 +162,7 @@ const EditAchievementPage = ({ params }) => {
           </label>
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 relative border rounded-md overflow-hidden bg-gray-100">
-              <Image src={getAchievementImageUrl(achievement.imageUrl)} alt="Gambar Pencapaian" fill className="object-contain" />
+              <Image src={imagePreview} alt="Gambar Pencapaian" fill className="object-contain" />
             </div>
             <input type="file" id="imageUrl" name="imageUrl" className="border rounded-md p-2" />
           </div>

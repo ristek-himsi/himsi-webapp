@@ -78,18 +78,20 @@ const DivisionDetailPage = ({ params }) => {
   }
 
   // Fungsi untuk mendapatkan URL gambar yang benar - mengikuti pola yang sama dengan halaman edit
-  const getDivisionImageUrl = (logoUrl) => {
-    if (!logoUrl) return "/placeholder-logo.png"; // Default placeholder jika tidak ada logo
+  // const getDivisionImageUrl = (logoUrl) => {
+  //   if (!logoUrl) return "/placeholder-logo.png"; // Default placeholder jika tidak ada logo
 
-    if (logoUrl.startsWith("http")) {
-      return logoUrl; // Sudah URL lengkap
-    }
+  //   if (logoUrl.startsWith("http")) {
+  //     return logoUrl; // Sudah URL lengkap
+  //   }
 
-    // Ekstrak nama file dari path
-    const fileName = logoUrl.includes("/") ? logoUrl.split("/").pop() : logoUrl;
+  //   // Ekstrak nama file dari path
+  //   const fileName = logoUrl.includes("/") ? logoUrl.split("/").pop() : logoUrl;
 
-    return getImageUrl(fileName, "divisi");
-  };
+  //   return getImageUrl(fileName, "divisi");
+  // };
+
+  const divisionImagePreview = getImageUrl(division?.logoUrl, "divisi");
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-md">
@@ -109,7 +111,7 @@ const DivisionDetailPage = ({ params }) => {
         {/* Logo dan Informasi Dasar */}
         <div className="md:col-span-1 flex flex-col items-center">
           <div className="w-48 h-48 relative mb-4 border rounded-md overflow-hidden bg-gray-100">
-            <Image src={getDivisionImageUrl(division.logoUrl)} alt={`Logo ${division.name}`} fill className="object-contain" />
+            <Image src={divisionImagePreview} alt={`Logo ${division.name}`} fill className="object-contain" />
           </div>
 
           {division.leader && (

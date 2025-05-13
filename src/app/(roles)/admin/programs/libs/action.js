@@ -1,6 +1,6 @@
 "use server";
 
-import { getImageUrl, uploadImage } from "@/lib/supabase";
+import { deleteFile, getImageUrl, uploadImage } from "@/lib/supabase";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -37,7 +37,7 @@ export async function addProgramAction(prevState, formData) {
         const fileName = await uploadImage(imageFile, "programs");
 
         // Dapatkan URL publik gambar
-        imageUrl = getImageUrl(fileName, "programs");
+        imageUrl = fileName;
       } catch (error) {
         console.error("Error processing image:", error);
         return {
@@ -111,6 +111,18 @@ export async function updateProgramAction(_, formData, programId) {
       };
     }
 
+    const existingProgram = await prisma.program.findUnique({
+      where: {
+        id: programId,
+      },
+    });
+
+    if (!existingProgram) {
+      return {
+        message: "program tidak ditemukan",
+      };
+    }
+
     // Siapkan data update
     const updateData = {
       name,
@@ -129,7 +141,17 @@ export async function updateProgramAction(_, formData, programId) {
         const fileName = await uploadImage(imageFile, "programs");
 
         // Dapatkan URL publik gambar baru
-        updateData.imageUrl = getImageUrl(fileName, "programs");
+        updateData.imageUrl = fileName;
+
+        if (existingProgram.imageUrl) {
+          try {
+            await deleteFile(existingProgram.imageUrl, "programs");
+            console.log("Old image deleted successfully");
+          } catch (deleteError) {
+            console.error("Error deleting old image:", deleteError);
+            // Continue with the update even if deletion fails
+          }
+        }
       } catch (error) {
         console.error("Error processing image:", error);
         return {

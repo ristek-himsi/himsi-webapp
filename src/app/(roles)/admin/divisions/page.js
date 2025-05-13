@@ -8,6 +8,7 @@ import { UserIcon, FolderIcon } from "lucide-react";
 
 const DivisionsPage = () => {
   const [divisions, setDivisions] = useState([]);
+  console.log(divisions);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -139,7 +140,7 @@ const DivisionsPage = () => {
             <div key={division.id} className="border rounded-lg p-4 sm:p-5 bg-white shadow-md hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center mb-4">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 mb-3 relative">
-                  <Image src={getDivisionImageUrl(division.logoUrl)} alt={`Logo ${division.name}`} fill className="object-contain" />
+                  <Image src={getImageUrl(division?.logoUrl, "divisi")} alt={`Logo ${division.name}`} fill className="object-contain" />
                 </div>
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 text-center">{division.name}</h2>
               </div>
@@ -149,7 +150,7 @@ const DivisionsPage = () => {
               {division.leader && (
                 <div className="flex items-center mt-4 mb-3 p-3 bg-blue-100 rounded-lg">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 relative mr-3">
-                    <Image src={getUserAvatar(division.leader.photo_url)} alt={division.leader.name} fill className="object-cover rounded-full" />
+                    <Image src={getImageUrl(division?.leader?.photo_url, "users")} alt={division.leader.name} fill className="object-cover rounded-full" />
                   </div>
                   <div>
                     <p className="font-medium text-base">{division.leader.name}</p>

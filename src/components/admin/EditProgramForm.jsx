@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useActionState } from 'react';
 import { updateProgramAction } from '@/app/(roles)/admin/programs/libs/action';
+import { getImageUrl } from '@/lib/supabase';
 
 const initialState = {
   message: "",
@@ -41,7 +42,7 @@ const EditProgramForm = ({ program, divisions }) => {
   const updateProgramById = (_, formData) => updateProgramAction(_, formData, program.id);
 
   const [state, formAction] = useActionState(updateProgramById, initialState);
-  const [imagePreview, setImagePreview] = useState(program.imageUrl);
+  // const [imagePreview, setImagePreview] = useState(program.imageUrl);
 
   // Redirect user if needed after successful form submission
   useEffect(() => {
@@ -57,16 +58,18 @@ const EditProgramForm = ({ program, divisions }) => {
   };
 
   // Handler untuk menampilkan preview gambar saat dipilih
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       setImagePreview(e.target.result);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const imagePreview = getImageUrl(program?.imageUrl, "programs")
 
   return (
     <div className="space-y-4">
@@ -123,7 +126,7 @@ const EditProgramForm = ({ program, divisions }) => {
                 id="image" 
                 accept="image/*"
                 className="w-full p-2 border border-gray-300 rounded" 
-                onChange={handleImageChange}
+                // onChange={handleImageChange}
               />
               <input 
                 type="hidden" 

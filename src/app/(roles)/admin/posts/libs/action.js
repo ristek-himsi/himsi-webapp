@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { uploadImage } from "@/lib/supabase";
+import { deleteFile, uploadImage } from "@/lib/supabase";
 
 const MAX_FILE_SIZE = 500 * 1024; // 500KB
 
@@ -27,7 +27,7 @@ export async function addPostAction(prevState, formData) {
 
       try {
         const fileName = await uploadImage(imageFile, "posts");
-        imageUrl = `posts/${fileName}`;
+        imageUrl = fileName;
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload gambar. Silakan coba lagi." };
@@ -105,7 +105,17 @@ export async function updatePostAction(prevState, formData, postId) {
 
       try {
         const fileName = await uploadImage(imageFile, "posts");
-        postData.imageUrl = `posts/${fileName}`;
+        postData.imageUrl = fileName;
+
+        if (existingPost.imageUrl) {
+          try {
+            await deleteFile(existingPost.imageUrl, "posts");
+            console.log("Old image deleted successfully");
+          } catch (deleteError) {
+            console.error("Error deleting old image:", deleteError);
+            // Continue with the update even if deletion fails
+          }
+        }
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload gambar. Silakan coba lagi." };
@@ -123,12 +133,12 @@ export async function updatePostAction(prevState, formData, postId) {
       data: postData,
     });
 
-    revalidatePath(`/admin/posts/${postId}`);
+    revalidatePath(`/admin/posts`);
     revalidatePath("/admin/posts");
 
     return {
       success: true,
-      redirectUrl: `/admin/posts/${postId}`,
+      redirectUrl: `/admin/posts`,
       message: "Postingan berhasil diperbarui!",
     };
   } catch (error) {

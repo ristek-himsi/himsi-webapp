@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { uploadImage } from "@/lib/supabase";
+import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 // Konfigurasi ukuran file maksimum (500KB)
@@ -33,7 +33,7 @@ export async function addDivisionAction(prevState, formData) {
 
       try {
         const fileName = await uploadImage(logoFile, "divisi");
-        logoUrl = `divisi/${fileName}`;
+        logoUrl = fileName;
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload logo. Silakan coba lagi." };
@@ -137,7 +137,17 @@ export async function updateDivisionAction(prevState, formData, divisionId) {
 
       try {
         const fileName = await uploadImage(logoFile, "divisi");
-        divisionData.logoUrl = `divisi/${fileName}`;
+        divisionData.logoUrl = fileName;
+
+        if (existingDivision.logoUrl) {
+          try {
+            await deleteFile(existingDivision.logoUrl, "divisi");
+            console.log("Old image deleted successfully");
+          } catch (deleteError) {
+            console.error("Error deleting old image:", deleteError);
+            // Continue with the update even if deletion fails
+          }
+        }
       } catch (error) {
         console.error("Error uploading image:", error);
         return { message: "Gagal mengupload logo. Silakan coba lagi." };

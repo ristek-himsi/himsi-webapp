@@ -6,8 +6,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 // Metadata for the application
 export const metadata = {
-  title: "HIMSI Web",
+  title: "HIMSI | Saintek",
   description: "Website Resmi Himpunan Mahasiswa Sistem Informasi",
+  icons: {
+    icon: "/logo-himsi.png",
+  },
 };
 
 // Root layout component that wraps all pages
