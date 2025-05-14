@@ -75,6 +75,8 @@ export default function Navbar() {
     { name: "Berita", path: "/pages/news", icon: <Newspaper className="w-4 h-4 mr-2" /> },
     { name: "Kontak", path: "/pages/kontak", icon: <Phone className="w-4 h-4 mr-2" /> },
     { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4 mr-2" /> },
+    { name: "Percobaan", path: "/pages/coba", icon: <Info className="w-4 h-4 mr-2" /> },
+
 
   ];
 
