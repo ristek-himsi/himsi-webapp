@@ -43,6 +43,7 @@ export function LoginFormMember({ className, ...props }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {state.message && <div>{state.message}</div>}
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">

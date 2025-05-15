@@ -147,20 +147,43 @@ export async function updatePostAction(prevState, formData, postId) {
   }
 }
 
-export async function deletePostAction(postId) {
+export async function deletePostAction(_, formData, postId) {
   try {
+    const existingPost = await prisma.post.findUnique({
+      where: {
+        id: parseInt(postId),
+      },
+    });
+
+    if (!existingPost) {
+      return { message: "tidak ada post yang ingin dihapus" };
+    }
+
     await prisma.post.delete({
       where: { id: parseInt(postId) },
     });
+
+    if (existingPost.imageUrl) {
+      try {
+        const filename = existingPost.imageUrl;
+        if (filename) {
+          await deleteFile(filename, "posts");
+          console.log("Berhasil menghapus gambar event di storage");
+        }
+      } catch (e) {
+        console.log("Error deleting event image:", e);
+      }
+    }
 
     revalidatePath("/admin/posts");
 
     return {
       success: true,
       message: "Postingan berhasil dihapus!",
+      redirectUrl: "/admin/posts",
     };
   } catch (error) {
     console.error("Error deleting post:", error);
-    return { message: `Terjadi kesalahan: ${error.message}` };
+    return { message: `Terjadi kesalahan: ${error.message}`, success: false };
   }
 }

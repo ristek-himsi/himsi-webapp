@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAllUser } from "@/lib/admin/data/users";
+import { getUser } from "@/lib/auth";
 
 export async function GET() {
   try {

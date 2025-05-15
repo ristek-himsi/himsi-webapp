@@ -7,7 +7,7 @@ export default async function MemberPage() {
   const { session, user } = await getUser();
 
   if (session && user?.role === "MEMBER") {
-    return redirect("/leader");
+    return redirect("/member");
   }
 
   return (

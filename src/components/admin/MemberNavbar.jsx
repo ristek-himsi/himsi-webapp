@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 // Import components
 import { Button } from "@/components/ui/button";
 // Import actions
-import { logout } from "@/lib/admin/action/logout";
+import { logoutLeader } from "@/lib/admin/action/logout";
 // Import icons from lucide-react
 import { Menu, User, LogOut, ChevronDown, X } from "lucide-react";
 import { getImageUrl } from "@/lib/supabase";
@@ -36,7 +36,7 @@ const SubmitButton = () => {
 const FormLogout = () => {
   const [state, formAction] = useActionState(async (prevState, formData) => {
     console.log("Logout form submitted");
-    return await logout(prevState, formData);
+    return await logoutLeader(prevState, formData);
   }, initialState);
   
   return (
@@ -49,20 +49,43 @@ const FormLogout = () => {
   );
 };
 
-// Top Admin Navbar Component
-export default function AdminNavbar({ user }) {
+// Member Navbar Component
+export default function MemberNavbar({ user }) {
+  // Check if user is MEMBER
+  if (!user || user.role !== "MEMBER") {
+    return (
+      <div className="bg-white shadow-sm sticky top-0 z-30">
+        <div className="max-w-full mx-auto px-2 sm:px-4 lg:px-8 py-4">
+          <p className="text-red-600 text-center">
+            Access Denied: This page is only for Members.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // State for mobile menu and dropdowns
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [userData, setUserData] = useState(null)
-  const [activeTab, setActiveTab] = useState("/admin");
+  const [userData, setUserData] = useState(null);
+  const [activeTab, setActiveTab] = useState("/member");
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const responseData = async () => {
+      const response = await fetch("/api/user");
+      const res = await response.json();
+      setUserData(res.data);
+    }
+
+    responseData();
+  }, []);
   
   // Close dropdown menus when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setUserMenuOpen(false); 
+        setUserMenuOpen(false);
       }
     }
     
@@ -72,34 +95,25 @@ export default function AdminNavbar({ user }) {
   
   // Set active tab based on current path
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const path = window.location.pathname;
       setActiveTab(path);
     }
   }, []);
-
-    useEffect(() => {
-      const responseData = async () => {
-        const response = await fetch("/api/user");
-        const res = await response.json();
-        setUserData(res.data);
-      }
   
-      responseData();
-    }, []);
-  
-  // Navigation items
-  const navItems = [
-    { name: "Dashboard", href: "/admin" },
-    { name: "Users", href: "/admin/users" },
-    { name: "Organization", href: "/admin/organisasi" },
-    { name: "Divisions", href: "/admin/divisions" },
-    { name: "Programs", href: "/admin/programs" },
-    { name: "Events", href: "/admin/events" },
-    { name: "Posts", href: "/admin/posts" },
-    { name: "Halaman", href: "/admin/pages" },
-    { name: "Achievement", href: "/admin/achievements" },
-  ];
+  // Navigation items for Members
+const navItems = [
+  { name: "Dashboard", href: "/member" },
+  { name: "Organisasi", href: "/member/organisasi" },
+  { name: "Divisi", href: "/member/divisi" },
+  { name: "Program", href: "/member/programs" },
+  { name: "Acara", href: "/member/events" },
+  { name: "SIFest", href: "/member/sifest" },
+  { name: "Artikel", href: "/member/posts" },
+  { name: "Galeri", href: "/member/gallery" },
+  { name: "Prestasi", href: "/member/achievement" },
+  { name: "Profil", href: "/member/profile" },
+];
   
   // Close mobile menu on screen resize
   useEffect(() => {
@@ -120,15 +134,15 @@ export default function AdminNavbar({ user }) {
           {/* Logo and primary nav */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-             <Link href="/admin" className="flex items-center">
+              <Link href="/member" className="flex items-center">
                 <Image
                   src="/logo-himsi.png"
                   alt="HIMSI Logo"
-                  width={42}
-                  height={42}
+                  width={32}
+                  height={32}
                   className="h-8 w-auto"
                 />
-                <span className="ml-2 font-semibold text-xl text-gray-900 hidden sm:block">HIMSI Admin</span>
+                <span className="ml-2 font-semibold text-xl text-gray-900 hidden sm:block">HIMSI Member</span>
               </Link>
             </div>
             
@@ -139,7 +153,7 @@ export default function AdminNavbar({ user }) {
                   key={item.href}
                   href={item.href}
                   className={`${
-                    activeTab === item.href || (item.href === "/admin" && activeTab === "/admin")
+                    activeTab === item.href || (item.href === "/member" && activeTab === "/member")
                       ? "border-b-2 border-blue-500 text-gray-900"
                       : "border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   } inline-flex items-center px-1 pt-1 text-sm font-medium whitespace-nowrap transition-colors`}
@@ -175,7 +189,7 @@ export default function AdminNavbar({ user }) {
                     <User size={18} className="text-gray-600" />
                   )}
                 </div>
-                <span className="hidden lg:block">{user?.name || "Admin"}</span>
+                <span className="hidden lg:block">{user?.name || "Member"}</span>
                 <ChevronDown size={16} className={`transition-transform hidden lg:block ${userMenuOpen ? "rotate-180" : ""}`} />
               </button>
               
@@ -184,8 +198,8 @@ export default function AdminNavbar({ user }) {
                   className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
                 >
                   <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">{user?.name || "Admin"}</p>
-                    <p className="text-xs text-gray-600 mt-1">{user?.email || "admin@himsi.org"}</p>
+                    <p className="text-sm font-semibold text-gray-900">{user?.name || "Member"}</p>
+                    <p className="text-xs text-gray-600 mt-1">{user?.email || "member@himsi.org"}</p>
                   </div>
                   <div className="border-t border-gray-100"></div>
                   <div className="px-4 py-2">
@@ -219,7 +233,7 @@ export default function AdminNavbar({ user }) {
                 key={item.href}
                 href={item.href}
                 className={`${
-                  activeTab === item.href || (item.href === "/admin" && activeTab === "/admin")
+                  activeTab === item.href || (item.href === "/member" && activeTab === "/member")
                     ? "bg-blue-50 border-l-4 border-blue-500 text-blue-700"
                     : "border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300"
                 } block pl-3 pr-4 py-2 text-base font-medium`}
@@ -240,7 +254,7 @@ export default function AdminNavbar({ user }) {
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                   {userData?.photo_url ? (
                     <Image
-                      src={getImageUrl(userData?.photo_url, "users")}
+                      src={getImageUrl(userData.photo_url, "users")}
                       alt="User Avatar"
                       width={40}
                       height={40}
@@ -252,8 +266,8 @@ export default function AdminNavbar({ user }) {
                 </div>
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-gray-800">{user?.name || "Admin"}</div>
-                <div className="text-sm font-medium text-gray-500">{user?.email || "admin@himsi.org"}</div>
+                <div className="text-base font-medium text-gray-800">{user?.name || "Member"}</div>
+                <div className="text-sm font-medium text-gray-500">{user?.email || "member@himsi.org"}</div>
               </div>
             </div>
             <div className="mt-3 space-y-1">

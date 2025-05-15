@@ -237,8 +237,30 @@ export async function updateUser(prevState, formData, userId) {
 
 export async function deleteUser(prevState, formData, userId) {
   try {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        id: parseInt(userId),
+      },
+    });
+
+    if (!existingUser) {
+      return { message: "tidak ada user yang ingin dihapus" };
+    }
+
     if (!userId || isNaN(parseInt(userId))) {
       return { message: "ID pengguna tidak valid" };
+    }
+
+    if (existingUser.photo_url) {
+      try {
+        const filename = existingUser.photo_url;
+        if (filename) {
+          await deleteFile(filename, "users");
+          console.log("Berhasil menghapus gambar user di storage");
+        }
+      } catch (e) {
+        console.log("Error deleting program user:", e);
+      }
     }
 
     await prisma.user.update({

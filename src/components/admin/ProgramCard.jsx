@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { getImageUrl } from "@/lib/supabase";
+import ProgramDeleteForm from "@/app/(roles)/admin/programs/components/ProgramDeleteForm";
 
 // Program Card Component
 export const ProgramCard = ({ program }) => {
@@ -50,6 +51,8 @@ export const ProgramCard = ({ program }) => {
         </div>
         
         <div className="flex justify-end space-x-2">
+           {/* disini */}
+           <ProgramDeleteForm id={program.id} />
           <Link href={`/admin/programs/${program.id}`}>
             <Button variant="outline" size="sm" className="text-xs">
               Detail

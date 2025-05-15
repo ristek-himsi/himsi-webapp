@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/supabase";
 import { FileTextIcon, UserIcon } from "lucide-react";
+import DeletePostForm from "./components/DeletePostForm";
 
 const PostsPage = () => {
   const [posts, setPosts] = useState([]);
@@ -34,37 +35,6 @@ const PostsPage = () => {
     };
     fetchPosts();
   }, []);
-
-  const handleOpenDeleteModal = (post) => {
-    setPostToDelete(post);
-    setDeleteModalOpen(true);
-  };
-
-  const handleCloseDeleteModal = () => {
-    setDeleteModalOpen(false);
-    setPostToDelete(null);
-  };
-
-  const handleDeletePost = async () => {
-    if (!postToDelete) return;
-
-    try {
-      const res = await fetch(`/api/posts/${postToDelete.id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setPosts(posts.filter((post) => post.id !== postToDelete.id));
-        handleCloseDeleteModal();
-      } else {
-        setError(data.message);
-      }
-    } catch (err) {
-      setError("Terjadi kesalahan saat menghapus postingan: " + err.message);
-    }
-  };
 
   const getPostImageUrl = (imageUrl) => {
     if (!imageUrl) return "/placeholder-image.png";
@@ -103,17 +73,6 @@ const PostsPage = () => {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
-        <div className="bg-red-50 shadow-md rounded-lg p-5 border border-red-200 text-red-900">
-          <p className="font-bold text-lg">Error</p>
-          <p className="text-base">{error}</p>
         </div>
       </div>
     );
@@ -178,29 +137,11 @@ const PostsPage = () => {
                 >
                   Edit
                 </button>
-                <button onClick={() => handleOpenDeleteModal(post)} className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
-                  Hapus
-                </button>
+                {/* disini */}
+                <DeletePostForm id={post?.id} />
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {deleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-xl">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Konfirmasi Hapus</h3>
-            <p className="text-base text-gray-600 mb-6">Apakah Anda yakin ingin menghapus postingan "{postToDelete?.title}"? Tindakan ini tidak dapat dibatalkan.</p>
-            <div className="flex justify-end space-x-3">
-              <button onClick={handleCloseDeleteModal} className="py-2.5 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                Batal
-              </button>
-              <button onClick={handleDeletePost} className="py-2.5 px-5 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                Hapus
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

@@ -196,14 +196,39 @@ export async function updateProgramAction(_, formData, programId) {
 /**
  * Delete a program
  */
-export async function deleteProgramAction(programId) {
+export async function deleteProgramAction(_, formData, programId) {
   try {
     // Hapus program dari database
+
+    const existingProgram = await prisma.program.findUnique({
+      where: {
+        id: parseInt(programId),
+      },
+    });
+
+    if (!existingProgram) {
+      return {
+        message: "tidak ada program yang akan dihapus",
+      };
+    }
+
     await prisma.program.delete({
       where: { id: parseInt(programId) },
     });
 
     console.log("Program berhasil dihapus:", programId);
+
+    if (existingProgram.imageUrl) {
+      try {
+        const filename = existingProgram.imageUrl;
+        if (filename) {
+          await deleteFile(filename, "programs");
+          console.log("Berhasil menghapus gambar program di storage");
+        }
+      } catch (e) {
+        console.log("Error deleting program image:", e);
+      }
+    }
 
     // Revalidate related paths
     revalidatePath("/admin/programs");
@@ -211,14 +236,13 @@ export async function deleteProgramAction(programId) {
     return {
       message: "Program berhasil dihapus",
       success: true,
-      error: false,
+      redirectUrl: "/admin/programs",
     };
   } catch (error) {
     console.error("Error deleting program:", error);
     return {
       message: "Terjadi kesalahan saat menghapus program: " + error.message,
       success: false,
-      error: true,
     };
   }
 }

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { logoutLeader } from "@/lib/admin/action/logout";
 // Import icons from lucide-react
 import { Menu, User, LogOut, ChevronDown, X } from "lucide-react";
+import { getImageUrl } from "@/lib/supabase";
 
 // Logout form component with useActionState
 const initialState = {
@@ -66,8 +67,19 @@ export default function LeaderNavbar({ user }) {
   // State for mobile menu and dropdowns
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("/admin");
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const responseData = async () => {
+      const response = await fetch("/api/user");
+      const res = await response.json();
+      setUserData(res.data);
+    }
+
+    responseData();
+  }, []);
   
   // Close dropdown menus when clicking outside
   useEffect(() => {
@@ -93,6 +105,8 @@ export default function LeaderNavbar({ user }) {
   const navItems = [
     { name: "Dashboard", href: "/leader" },
     { name: "Organization", href: "/leader/organisasi" },
+    { name: "Division", href: "/leader/division/:id" },
+    { name: "Posts", href: "/leader/posts" },
     { name: "Members", href: "/leader/members" },
     { name: "Programs", href: "/leader/programs" },
     { name: "Achievement", href: "/leader/achievement" },
@@ -159,8 +173,18 @@ export default function LeaderNavbar({ user }) {
                 }}
                 className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  <User size={18} className="text-gray-600" />
+                <div className="h-8 w-8 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
+                  {userData?.photo_url ? (
+                    <Image
+                      src={getImageUrl(userData.photo_url, "users")}
+                      alt="User Avatar"
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User size={18} className="text-gray-600" />
+                  )}
                 </div>
                 <span className="hidden lg:block">{user?.name || "Leader"}</span>
                 <ChevronDown size={16} className={`transition-transform hidden lg:block ${userMenuOpen ? "rotate-180" : ""}`} />
@@ -224,8 +248,18 @@ export default function LeaderNavbar({ user }) {
           <div className="pt-4 pb-3 border-t border-gray-200 bg-gray-50">
             <div className="flex items-center px-4">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  <User size={20} className="text-gray-600" />
+                <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                  {userData?.photo_url ? (
+                    <Image
+                      src={getImageUrl(userData.photo_url, "users")}
+                      alt="User Avatar"
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User size={20} className="text-gray-600" />
+                  )}
                 </div>
               </div>
               <div className="ml-3">
