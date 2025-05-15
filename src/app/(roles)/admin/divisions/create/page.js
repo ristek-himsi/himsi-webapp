@@ -4,10 +4,20 @@ import React, { useEffect, useState } from "react";
 import { addDivisionAction } from "../libs/action";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 const initialState = {
   message: "",
   success: false,
+};
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <button disabled={pending} type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+      {pending ? "Loading..." : "Simpan Divisi"}
+    </button>
+  );
 };
 
 const Page = () => {
@@ -108,9 +118,7 @@ const Page = () => {
         </div>
 
         <div className="pt-4">
-          <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-            Simpan Divisi
-          </button>
+          <SubmitButton />
         </div>
       </form>
 

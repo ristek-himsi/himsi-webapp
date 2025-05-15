@@ -65,7 +65,7 @@ export default async function OrganizationStructurePage() {
                 }}
                 className="inline"
               >
-                <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
+                <button type="submit" className="px-4 py-2 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
                   Hapus
                 </button>
               </form>
@@ -135,9 +135,9 @@ export default async function OrganizationStructurePage() {
                       });
                       redirect("/admin/organisasi");
                     }}
-                    className="inline"
+                    className="inline cursor-pointer"
                   >
-                    <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
+                    <button type="submit" className="px-4 py-2 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
                       Hapus
                     </button>
                   </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { User, Mail, Briefcase, Building, Trash } from "lucide-react";
+import { User, Mail, Briefcase, Building, Trash, Edit2 } from "lucide-react";
 import Link from "next/link";
 import { deleteUser } from "@/lib/admin/action/users/user";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,21 @@ const DeleteButton = () => {
     >
       <Trash className="h-3 w-3 mr-1" />
       {pending ? "Menghapus..." : "Hapus"}
+    </Button>
+  );
+};
+
+const EditButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      size="sm"
+      disabled={pending}
+      className="cursor-pointer min-w-[80px]"
+      variant="outline"
+    >
+      <Edit2 className="h-3 w-3 mr-1" />
+      {pending ? "loading..." : "Edit"}
     </Button>
   );
 };
@@ -112,9 +127,7 @@ const UserCard = ({ user }) => {
 
       <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end space-x-3">
         <Link href={`/admin/users/${user.id}`}>
-          <Button size="sm" variant="outline" className="min-w-[80px]">
-            Edit
-          </Button>
+          <EditButton/>
         </Link>
         <FormDelete userId={user.id} />
       </div>

@@ -54,12 +54,12 @@ export const ProgramCard = ({ program }) => {
            {/* disini */}
            <ProgramDeleteForm id={program.id} />
           <Link href={`/admin/programs/${program.id}`}>
-            <Button variant="outline" size="sm" className="text-xs">
+            <Button variant="outline" size="sm" className="text-xs cursor-pointer">
               Detail
             </Button>
           </Link>
           <Link href={`/admin/programs/edit/${program.id}`}>
-            <Button variant="outline" size="sm" className="text-xs">
+            <Button variant="default" size="sm" className="text-xs cursor-pointer">
               Edit
             </Button>
           </Link>

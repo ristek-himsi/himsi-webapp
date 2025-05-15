@@ -30,8 +30,8 @@ export const ProgramsPage = ({ programs, divisions }) => {
                 </option>
               ))}
             </select>
-            <Link href="/admin/programs/add">
-              <Button className="whitespace-nowrap">
+            <Link className="cursor-pointer" href="/admin/programs/add">
+              <Button className="whitespace-nowrap cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -50,7 +50,7 @@ export const ProgramsPage = ({ programs, divisions }) => {
             <p className="text-gray-500 mb-4">
               {selectedDivision ? "Tidak ada program untuk divisi yang dipilih." : "Belum ada program yang ditambahkan."}
             </p>
-            <Link href="/admin/programs/add">
+            <Link className="cursor-pointer" href="/admin/programs/add">
               <Button>Tambah Program Baru</Button>
             </Link>
           </div>

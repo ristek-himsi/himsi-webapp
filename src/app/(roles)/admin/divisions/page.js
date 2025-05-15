@@ -124,7 +124,7 @@ const DivisionsPage = () => {
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daftar Divisi</h1>
         <button
           onClick={() => router.push("/admin/divisions/create")}
-          className="bg-blue-900 text-white py-2 px-5 rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base w-full sm:w-auto text-center"
+          className="bg-blue-900 cursor-pointer text-white py-2 px-5 rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base w-full sm:w-auto text-center"
         >
           Tambah Divisi
         </button>
@@ -177,17 +177,17 @@ const DivisionsPage = () => {
               <div className="mt-4 flex justify-center space-x-3">
                 <button
                   onClick={() => router.push(`/admin/divisions/${division.id}`)}
-                  className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
+                  className="bg-blue-600 cursor-pointer text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
                 >
                   Detail
                 </button>
                 <button
                   onClick={() => router.push(`/admin/divisions/${division.id}/edit`)}
-                  className="bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
+                  className="bg-yellow-600 cursor-pointer text-white py-2 px-4 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base"
                 >
                   Edit
                 </button>
-                <button onClick={() => handleOpenDeleteModal(division)} className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
+                <button onClick={() => handleOpenDeleteModal(division)} className="bg-red-600 cursor-pointer text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
                   Hapus
                 </button>
               </div>

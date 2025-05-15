@@ -26,7 +26,7 @@ const ProgramDeleteForm = ({id}) => {
 
     return (
         <form action={formAction}>
-            <Button type="submit" variant="outline" size="sm" className="text-xs">
+            <Button type="submit" variant="destructive" size="sm" className="text-xs cursor-pointer">
               Hapus
             </Button>
         </form>
