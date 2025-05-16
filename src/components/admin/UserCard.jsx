@@ -119,10 +119,6 @@ const UserCard = ({ user }) => {
             <span>{user.division.name}</span>
           </div>
         )}
-        <div className="flex items-center">
-          <Briefcase className="h-4 w-4 mr-2" />
-          <span>ID: {user.id}</span>
-        </div>
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end space-x-3">

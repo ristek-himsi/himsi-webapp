@@ -11,7 +11,7 @@ const page = async ({ params }) => {
 
   return (
     <div>
-      <h1>Halaman edit program</h1>
+      <h1 className="text-center my-2 text-xl sm:text-2xl font-semibold">Halaman edit program</h1>
       <EditProgramForm program={program} divisions={divisions} />
     </div>
   );

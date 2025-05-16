@@ -20,7 +20,7 @@ const SubmitButton = () => {
   return (
     <button 
       type="submit" 
-      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors flex items-center justify-center disabled:bg-blue-400 disabled:cursor-not-allowed"
+      className="bg-blue-600 cursor-pointer  w-full text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors flex items-center justify-center disabled:bg-blue-400 disabled:cursor-not-allowed"
       disabled={pending}
     >
       {pending ? (
@@ -72,8 +72,8 @@ const EditProgramForm = ({ program, divisions }) => {
   const imagePreview = getImageUrl(program?.imageUrl, "programs")
 
   return (
-    <div className="space-y-4">
-      <form action={formAction}>
+    <div className="space-y-4 mx-3">
+      <form className='p-4 shadow-sm rounded-sm' action={formAction}>
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">

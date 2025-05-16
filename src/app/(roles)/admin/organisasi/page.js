@@ -20,130 +20,145 @@ export default async function OrganizationStructurePage() {
   const structures = await getOrganizationStructures();
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 shadow-xl rounded-lg">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Manajemen Struktur Organisasi</h1>
-        <Link href="/admin/organisasi/add" className="px-5 py-2.5 bg-blue-900 text-white rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base w-full sm:w-auto text-center">
-          Tambah Struktur
-        </Link>
-      </div>
+    <div className=" bg-slate-50 py-6 px-4 sm:px-6">
+      <div className="w-full max-w-md sm:max-w-4xl mx-auto bg-white rounded-md shadow-md p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800">Manajemen Struktur Organisasi</h1>
+          <Link
+            href="/admin/organisasi/add"
+            className="w-full sm:w-auto px-5 py-2.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 hover:scale-105 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-transform text-sm text-center"
+          >
+            Tambah Struktur
+          </Link>
+        </div>
 
-      {/* Mobile: Card Layout */}
-      <div className="sm:hidden space-y-4">
-        {structures.map((structure) => (
-          <div key={structure.id} className="bg-white shadow-md p-5 rounded-lg hover:shadow-lg transition-shadow">
-            <h3 className="text-base font-semibold text-gray-900 mb-3">Tahun Akademik: {structure.academicYear}</h3>
-            <div className="space-y-3 text-base text-gray-700">
-              <p>
-                <span className="font-medium">Ketua:</span> {structure.leader?.name || "-"}
-              </p>
-              <p>
-                <span className="font-medium">Wakil Ketua:</span> {structure.viceLeader?.name || "-"}
-              </p>
-              <p>
-                <span className="font-medium">Sekretaris:</span> {structure.secretary?.name || "-"}
-              </p>
-              <p>
-                <span className="font-medium">Bendahara:</span> {structure.treasurer?.name || "-"}
-              </p>
-              <p>
-                <span className="font-medium">Status:</span>{" "}
-                <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${structure.isActive ? "bg-green-200 text-green-900" : "bg-red-200 text-red-900"}`}>{structure.isActive ? "Aktif" : "Tidak Aktif"}</span>
-              </p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-3">
-              <Link href={`/admin/organisasi/edit/${structure.id}`} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
-                Edit
-              </Link>
-              <form
-                action={async () => {
-                  "use server";
-                  await prisma.organizationStructure.delete({
-                    where: { id: structure.id },
-                  });
-                  redirect("/admin/organisasi");
-                }}
-                className="inline"
-              >
-                <button type="submit" className="px-4 py-2 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
-                  Hapus
-                </button>
-              </form>
-            </div>
+        {structures.length === 0 && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 text-amber-700 p-4 rounded-md">
+            <p>Belum ada struktur organisasi yang tersedia.</p>
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* Tablet/Laptop: Table Layout */}
-      <div className="hidden sm:block overflow-x-auto">
-        <div role="table" aria-describedby="organization-structure-table" className="w-full border-collapse">
-          <div role="rowgroup" className="bg-blue-50">
-            <div role="row" className="flex">
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Tahun Akademik
+        {/* Mobile: Card Layout */}
+        <div className="sm:hidden space-y-3">
+          {structures.map((structure) => (
+            <div key={structure.id} className="bg-white shadow-sm p-4 rounded-md hover:shadow-md transition-shadow">
+              <h3 className="text-sm font-semibold text-slate-800 mb-3">Tahun Akademik: {structure.academicYear}</h3>
+              <div className="space-y-2 text-xs text-slate-600">
+                <p>
+                  <span className="font-medium">Ketua:</span> {structure.leader?.name || "-"}
+                </p>
+                <p>
+                  <span className="font-medium">Wakil Ketua:</span> {structure.viceLeader?.name || "-"}
+                </p>
+                <p>
+                  <span className="font-medium">Sekretaris:</span> {structure.secretary?.name || "-"}
+                </p>
+                <p>
+                  <span className="font-medium">Bendahara:</span> {structure.treasurer?.name || "-"}
+                </p>
+                <p>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span className={`inline-block px-1.5 py-0.5 text-xs font-medium rounded-full ${structure.isActive ? "bg-teal-100 text-teal-800" : "bg-rose-100 text-rose-800"}`}>{structure.isActive ? "Aktif" : "Tidak Aktif"}</span>
+                </p>
               </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Ketua
-              </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Wakil Ketua
-              </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Sekretaris
-              </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Bendahara
-              </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Status Aktif
-              </div>
-              <div role="columnheader" className="px-3 py-2 sm:px-4 sm:py-3 text-left text-sm font-semibold text-blue-900 flex-1">
-                Aksi
+              <div className="mt-4 pt-4 border-t border-slate-200 flex flex-col space-y-3">
+                <Link
+                  href={`/admin/organisasi/edit/${structure.id}`}
+                  className="w-full px-5 py-2.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 hover:scale-105 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-transform text-sm text-center"
+                >
+                  Edit
+                </Link>
+                <form
+                  action={async () => {
+                    "use server";
+                    await prisma.organizationStructure.delete({
+                      where: { id: structure.id },
+                    });
+                    redirect("/admin/organisasi");
+                  }}
+                >
+                  <button type="submit" className="w-full px-5 py-2.5 bg-rose-600 text-white rounded-md hover:bg-rose-700 hover:scale-105 focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition-transform text-sm">
+                    Hapus
+                  </button>
+                </form>
               </div>
             </div>
-          </div>
-          <div role="rowgroup">
-            {structures.map((structure) => (
-              <div key={structure.id} role="row" className="flex odd:bg-white even:bg-blue-25 hover:bg-blue-100 transition-colors">
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 flex-1">
-                  {structure.academicYear}
+          ))}
+        </div>
+
+        {/* Tablet/Laptop: Table Layout */}
+        <div className="hidden sm:block overflow-x-auto">
+          <div role="table" aria-describedby="organization-structure-table" className="w-full border-collapse">
+            <div role="rowgroup" className="bg-slate-100">
+              <div role="row" className="grid grid-cols-7 gap-6 px-4 py-3">
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Tahun Akademik
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 flex-1">
-                  {structure.leader?.name || "-"}
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Ketua
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 flex-1">
-                  {structure.viceLeader?.name || "-"}
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Wakil Ketua
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 flex-1">
-                  {structure.secretary?.name || "-"}
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Sekretaris
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 flex-1">
-                  {structure.treasurer?.name || "-"}
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Bendahara
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 flex-1">
-                  <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${structure.isActive ? "bg-green-200 text-green-900" : "bg-red-200 text-red-900"}`}>{structure.isActive ? "Aktif" : "Tidak Aktif"}</span>
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Status Aktif
                 </div>
-                <div role="cell" className="px-3 py-2 sm:px-4 sm:py-3 flex space-x-3 flex-1">
-                  <Link href={`/admin/organisasi/edit/${structure.id}`} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
-                    Edit
-                  </Link>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await prisma.organizationStructure.delete({
-                        where: { id: structure.id },
-                      });
-                      redirect("/admin/organisasi");
-                    }}
-                    className="inline cursor-pointer"
-                  >
-                    <button type="submit" className="px-4 py-2 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
-                      Hapus
-                    </button>
-                  </form>
+                <div role="columnheader" className="text-left text-sm font-semibold text-slate-800 min-w-[120px]">
+                  Aksi
                 </div>
               </div>
-            ))}
+            </div>
+            <div role="rowgroup">
+              {structures.map((structure) => (
+                <div key={structure.id} role="row" className="grid grid-cols-7 gap-6 px-4 py-3 border-b border-slate-200 odd:bg-white even:bg-slate-50 hover:bg-slate-50 transition-colors">
+                  <div role="cell" className="text-sm text-slate-800 min-w-[120px]">
+                    {structure.academicYear}
+                  </div>
+                  <div role="cell" className="text-sm text-slate-800 min-w-[120px]">
+                    {structure.leader?.name || "-"}
+                  </div>
+                  <div role="cell" className="text-sm text-slate-800 min-w-[120px]">
+                    {structure.viceLeader?.name || "-"}
+                  </div>
+                  <div role="cell" className="text-sm text-slate-800 min-w-[120px]">
+                    {structure.secretary?.name || "-"}
+                  </div>
+                  <div role="cell" className="text-sm text-slate-800 min-w-[120px]">
+                    {structure.treasurer?.name || "-"}
+                  </div>
+                  <div role="cell" className="min-w-[120px]">
+                    <span className={`inline-block px-1.5 py-0.5 text-xs font-medium rounded-full ${structure.isActive ? "bg-teal-100 text-teal-800" : "bg-rose-100 text-rose-800"}`}>{structure.isActive ? "Aktif" : "Tidak Aktif"}</span>
+                  </div>
+                  <div role="cell" className="flex space-x-3 min-w-[120px]">
+                    <Link
+                      href={`/admin/organisasi/edit/${structure.id}`}
+                      className="px-5 py-2.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 hover:scale-105 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-transform text-sm"
+                    >
+                      Edit
+                    </Link>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await prisma.organizationStructure.delete({
+                          where: { id: structure.id },
+                        });
+                        redirect("/admin/organisasi");
+                      }}
+                    >
+                      <button type="submit" className="px-5 py-2.5 bg-rose-600 text-white rounded-md hover:bg-rose-700 hover:scale-105 focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition-transform text-sm">
+                        Hapus
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
