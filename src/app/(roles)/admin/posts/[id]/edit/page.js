@@ -69,13 +69,15 @@ const EditPostPage = ({ params }) => {
 
   if (loading) {
     return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="animate-pulse flex flex-col space-y-4">
-          <div className="h-10 bg-gray-200 rounded w-1/2"></div>
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-20 bg-gray-200 rounded"></div>
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-20 bg-gray-200 rounded"></div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-0">
+        <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-xl shadow-lg p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-10 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
@@ -83,114 +85,143 @@ const EditPostPage = ({ params }) => {
 
   if (error) {
     return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-0">
+        <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+            <p className="font-semibold">Error</p>
+            <p>{error}</p>
+          </div>
+          <button onClick={() => router.push("/admin/posts")} className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+            Kembali ke Daftar Postingan
+          </button>
         </div>
-        <button onClick={() => router.push("/admin/posts")} className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-          Kembali ke Daftar Postingan
-        </button>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-          <p>Postingan tidak ditemukan</p>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-0">
+        <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg">
+            <p>Postingan tidak ditemukan</p>
+          </div>
+          <button onClick={() => router.push("/admin/posts")} className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+            Kembali ke Daftar Postingan
+          </button>
         </div>
-        <button onClick={() => router.push("/admin/posts")} className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-          Kembali ke Daftar Postingan
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Edit Postingan: {post.title}</h1>
-        <button onClick={() => router.push(`/admin/posts/${id}`)} className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-0">
+      <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-xl shadow-lg p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Edit Postingan: {post.title}</h1>
+        </div>
+
+        {state.message && <div className="p-3 mb-4 bg-red-50 text-red-700 rounded-lg border-l-4 border-red-500">{state.message}</div>}
+
+        <form action={formAction} className="space-y-6">
+          <div className="flex flex-col">
+            <label htmlFor="title" className="text-sm font-medium text-gray-700 mb-1">
+              Judul
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              defaultValue={post.title}
+              placeholder="Masukkan judul postingan"
+              className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="content" className="text-sm font-medium text-gray-700 mb-1">
+              Konten
+            </label>
+            <textarea
+              id="content"
+              name="content"
+              defaultValue={post.content}
+              placeholder="Masukkan konten postingan"
+              className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-y"
+              rows="6"
+              required
+            ></textarea>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="imageUrl" className="text-sm font-medium text-gray-700 mb-1">
+              Gambar Postingan
+            </label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="w-20 h-20 relative border border-gray-300 rounded-lg overflow-hidden bg-gray-50 shrink-0">
+                <Image src={getPostImageUrl(post?.imageUrl)} alt="Gambar Postingan" fill className="object-cover" />
+              </div>
+              <div className="w-full">
+                <input
+                  type="file"
+                  id="imageUrl"
+                  name="imageUrl"
+                  className="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="text-xs text-gray-500 mt-2">Biarkan kosong jika tidak ingin mengubah gambar</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">
+              Kategori
+            </label>
+            <select id="category" name="category" defaultValue={post.category} className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
+              <option value="">-- Pilih Kategori --</option>
+              <option value="NEWS">Berita</option>
+              <option value="ANNOUNCEMENT">Pengumuman</option>
+              <option value="ARTICLE">Artikel</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="status" className="text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select id="status" name="status" defaultValue={post.status} className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
+              <option value="">-- Pilih Status --</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Terpublikasi</option>
+              <option value="ARCHIVED">Diarsipkan</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="authorId" className="text-sm font-medium text-gray-700 mb-1">
+              Penulis
+            </label>
+            <select id="authorId" name="authorId" defaultValue={post.author?.id || ""} className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
+              <option value="">-- Pilih Penulis --</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name} - {user.email}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="pt-4 flex flex-col sm:flex-row gap-4">
+            <button type="submit" className="w-full bg-blue-600 cursor-pointer text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+              Simpan Perubahan
+            </button>
+          </div>
+        </form>
+        <button onClick={() => router.push(`/admin/posts/${id}`)} className="w-full mt-3 cursor-pointer bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors">
           Batal
         </button>
       </div>
-
-      {state.message && <div className="p-3 mb-4 bg-red-100 text-red-700 rounded-md">{state.message}</div>}
-
-      <form action={formAction} className="space-y-4">
-        <div className="flex flex-col">
-          <label htmlFor="title" className="text-sm font-medium mb-1">
-            Judul
-          </label>
-          <input type="text" id="title" name="title" defaultValue={post.title} placeholder="Masukkan judul postingan" className="border rounded-md p-2" required />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="content" className="text-sm font-medium mb-1">
-            Konten
-          </label>
-          <textarea id="content" name="content" defaultValue={post.content} placeholder="Masukkan konten postingan" className="border rounded-md p-2" rows="6" required></textarea>
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="imageUrl" className="text-sm font-medium mb-1">
-            Gambar Postingan
-          </label>
-          <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 relative border rounded-md overflow-hidden bg-gray-100">
-              <Image src={getImageUrl(post?.imageUrl, "posts")} alt="Gambar Postingan" fill className="object-contain" />
-            </div>
-            <input type="file" id="imageUrl" name="imageUrl" className="border rounded-md p-2" />
-          </div>
-          <p className="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengubah gambar</p>
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="category" className="text-sm font-medium mb-1">
-            Kategori
-          </label>
-          <select id="category" name="category" defaultValue={post.category} className="border rounded-md p-2" required>
-            <option value="">-- Pilih Kategori --</option>
-            <option value="NEWS">Berita</option>
-            <option value="ANNOUNCEMENT">Pengumuman</option>
-            <option value="ARTICLE">Artikel</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="status" className="text-sm font-medium mb-1">
-            Status
-          </label>
-          <select id="status" name="status" defaultValue={post.status} className="border rounded-md p-2" required>
-            <option value="">-- Pilih Status --</option>
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Terpublikasi</option>
-            <option value="ARCHIVED">Diarsipkan</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="authorId" className="text-sm font-medium mb-1">
-            Penulis
-          </label>
-          <select id="authorId" name="authorId" defaultValue={post.author?.id || ""} className="border rounded-md p-2" required>
-            <option value="">-- Pilih Penulis --</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name} - {user.email}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="pt-4 flex space-x-3">
-          <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-            Simpan Perubahan
-          </button>
-        </div>
-      </form>
     </div>
   );
 };

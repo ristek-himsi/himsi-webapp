@@ -73,7 +73,7 @@ export default function EventsAdminPage() {
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Manajemen Event</h1>
-        <Link href="/admin/events/create" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition-colors">
+        <Link href="/admin/events/create" className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 sm:py-2 sm:px-4 rounded-md text-sm text-center transition-colors">
           Tambah Event Baru
         </Link>
       </div>

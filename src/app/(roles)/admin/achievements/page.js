@@ -124,7 +124,10 @@ const AchievementsPage = () => {
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
       <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daftar Pencapaian</h1>
-        <button onClick={() => router.push("/admin/achievements/create")} className="flex items-center px-5 py-2.5 bg-blue-900 text-white rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+        <button
+          onClick={() => router.push("/admin/achievements/create")}
+          className="flex cursor-pointer items-center px-5 py-2.5 bg-blue-900 text-white rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+        >
           <Plus className="w-5 h-5 mr-2" />
           Tambah Pencapaian
         </button>
@@ -147,7 +150,7 @@ const AchievementsPage = () => {
                 <div className="mt-3 flex space-x-3">
                   <button
                     onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
-                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-1/2 justify-center transition-colors flex items-center"
                   >
                     <Pencil className="w-4 h-4 mr-1" /> Edit
                   </button>
@@ -201,7 +204,7 @@ const AchievementsPage = () => {
                     <div role="cell" className="px-4 py-3 flex space-x-3 flex-1">
                       <button
                         onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
-                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+                        className="px-3 cursor-pointer py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
                       >
                         <Pencil className="w-4 h-4 mr-1" /> Edit
                       </button>

@@ -97,7 +97,6 @@ export default function AdminNavbar({ user }) {
     { name: "Programs", href: "/admin/programs" },
     { name: "Events", href: "/admin/events" },
     { name: "Posts", href: "/admin/posts" },
-    { name: "Halaman", href: "/admin/pages" },
     { name: "Achievement", href: "/admin/achievements" },
   ];
   

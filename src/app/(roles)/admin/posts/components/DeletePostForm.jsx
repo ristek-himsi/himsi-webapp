@@ -28,7 +28,7 @@ const DeletePostForm = ({id}) => {
     return (
         <form action={formAction}>
              <button 
-             className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base">
+             className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-base w-full">
                   Hapus
                 </button>
         </form>
