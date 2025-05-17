@@ -1,6 +1,6 @@
 import React from "react";
 
-const loading = () => {
+const Loading = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="flex flex-col items-center">
@@ -22,4 +22,4 @@ const loading = () => {
   );
 };
 
-export default loading;
+export default Loading;

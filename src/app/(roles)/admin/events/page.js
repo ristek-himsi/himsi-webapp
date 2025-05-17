@@ -1,36 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import EventCard from "@/components/admin/EventCard";
-import { getAllEvents, deleteEvent } from "./libs/data";
+import { getAllEvents } from "./libs/data";
+import Loading from "@/app/loading";
 
-export default function EventsAdminPage() {
+// Content component that will be wrapped with Suspense
+const EventsContent = () => {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedType, setSelectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [notification, setNotification] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchEvents() {
+      setIsLoading(true);
       try {
         const eventsData = await getAllEvents();
         setEvents(eventsData);
-        setLoading(false);
       } catch (err) {
         console.error("Gagal memuat events:", err);
         setError("Gagal memuat event. Coba lagi nanti.");
-        setLoading(false);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchEvents();
   }, []);
-
-  // Fungsi untuk hapus event
 
   // Filter events berdasarkan type, status, dan search query
   const filteredEvents = events.filter((event) => {
@@ -41,17 +42,6 @@ export default function EventsAdminPage() {
       : true;
     return matchesType && matchesStatus && matchesSearch;
   });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen p-6 flex justify-center items-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-blue-500 border-b-blue-500 rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Memuat event...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -102,7 +92,17 @@ export default function EventsAdminPage() {
         />
       </div>
 
-      {filteredEvents.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[200px]">
+          <div className="animate-pulse flex flex-col space-y-4 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((index) => (
+                <div key={index} className="bg-gray-100 rounded-lg h-64 w-full"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : filteredEvents.length === 0 ? (
         <div className="bg-gray-50 p-8 text-center rounded-md">
           <p className="text-gray-500 mb-4">
             Tidak ada event ditemukan.
@@ -120,5 +120,13 @@ export default function EventsAdminPage() {
         </div>
       )}
     </div>
+  );
+};
+
+export default function EventsAdminPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <EventsContent />
+    </Suspense>
   );
 }

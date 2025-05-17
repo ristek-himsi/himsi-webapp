@@ -8,7 +8,6 @@ const HomePage = () => {
   return (
     <div className=" mt-15">
       <Navbar />
-
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 lg:py-20 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 md:mb-4 tracking-tight">HIMSI: Pioneering Innovation</h1>

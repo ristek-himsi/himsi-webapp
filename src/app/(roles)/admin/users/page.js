@@ -1,16 +1,24 @@
 "use server";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { getAllUser } from "@/lib/admin/data/users";
 import ClientUsersFilter from "@/components/admin/ClientUsersFilter";
+import Loading from "@/app/loading";
 
-// Server component to fetch users and render the client-side filter component
-const AdminUsersPage = async () => {
+// Component to fetch and render users
+const UsersContent = async () => {
   const users = await getAllUser();
 
+  return <ClientUsersFilter users={users} />;
+};
+
+// Server component with loading state
+const AdminUsersPage = () => {
   return (
     <div className="p-4 sm:p-6">
-      <ClientUsersFilter users={users} />
+      <Suspense fallback={<Loading />}>
+        <UsersContent />
+      </Suspense>
     </div>
   );
 };

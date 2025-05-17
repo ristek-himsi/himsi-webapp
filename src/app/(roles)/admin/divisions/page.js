@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/supabase";
 import { UserIcon, FolderIcon } from "lucide-react";
+import Loading from "@/app/loading";
 
 const DivisionsPage = () => {
   const [divisions, setDivisions] = useState([]);
@@ -80,33 +81,7 @@ const DivisionsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 py-4 sm:py-6 px-4 sm:px-6">
-        <div className="max-w-md sm:max-w-7xl mx-auto">
-          <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h1 className="text-xl sm:text-2xl font-semibold text-slate-800">Daftar Divisi</h1>
-            <div className="h-10 w-32 bg-teal-100 rounded-md animate-pulse"></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="border rounded-md p-4 bg-white shadow-sm">
-                <div className="animate-pulse flex flex-col space-y-4">
-                  <div className="rounded-full bg-teal-100 h-12 w-12 sm:h-16 sm:w-16 mx-auto"></div>
-                  <div className="h-6 bg-teal-100 rounded w-3/4 mx-auto"></div>
-                  <div className="h-4 bg-teal-100 rounded w-full"></div>
-                  <div className="h-4 bg-teal-100 rounded w-full"></div>
-                  <div className="flex flex-row space-x-2 justify-center">
-                    <div className="h-8 bg-teal-100 rounded w-20"></div>
-                    <div className="h-8 bg-teal-100 rounded w-20"></div>
-                    <div className="h-8 bg-teal-100 rounded w-20"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {

@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/supabase";
 import { FileTextIcon } from "lucide-react";
 import DeletePostForm from "./components/DeletePostForm";
+import Loading from "@/app/loading";
 
-const PostsPage = () => {
+// Loading component with skeleton UI
+
+// Content component with actual data
+const PostsContent = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,33 +52,8 @@ const PostsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 sm:py-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Daftar Postingan</h1>
-            <div className="h-9 w-28 bg-blue-100 rounded-lg animate-pulse"></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
-                <div className="animate-pulse flex flex-col space-y-3">
-                  <div className="rounded-lg bg-blue-100 h-24 w-full"></div>
-                  <div className="h-5 bg-blue-100 rounded w-3/4"></div>
-                  <div className="h-4 bg-blue-100 rounded w-full"></div>
-                  <div className="h-4 bg-blue-100 rounded w-5/6"></div>
-                  <div className="flex space-x-2 justify-center">
-                    <div className="h-8 w-16 bg-blue-100 rounded-lg"></div>
-                    <div className="h-8 w-16 bg-blue-100 rounded-lg"></div>
-                    <div className="h-8 w-16 bg-blue-100 rounded-lg"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    // This shouldn't show because of Suspense, but keeping it as a fallback
+    return <Loading />;
   }
 
   return (
@@ -130,8 +109,8 @@ const PostsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-center gap-2">
-                  <button onClick={() => router.push(`/admin/posts/${post.id}/edit`)} className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-full sm:w-auto">
+                <div className="flex flex-row justify-center gap-2">
+                  <button onClick={() => router.push(`/admin/posts/${post.id}/edit`)} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-1/2">
                     Edit
                   </button>
                   <DeletePostForm id={post?.id} />
@@ -142,6 +121,15 @@ const PostsPage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+// Main component with Suspense
+const PostsPage = () => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <PostsContent />
+    </Suspense>
   );
 };
 

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const pathname = usePathname();
 
   // Memoized toggle function
@@ -16,16 +16,22 @@ export default function Navbar() {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
-  // Reset menu state and handle scroll effect
+  // Reset menu state and handle scroll effect with smooth transition
   useEffect(() => {
     // Reset menu on route change
     setIsMenuOpen(false);
     
-    // Update scroll state
+    // Update scroll state with smooth transition
     const handleScroll = () => {
-      const scrolled = window.scrollY > 10;
-      setIsScrolled(scrolled);
-      scrolled ? document.body.classList.add("scrolled") : document.body.classList.remove("scrolled");
+      // Calculate scroll progress as a value between 0 and 1
+      const scrolled = Math.min(window.scrollY / 50, 1);
+      setScrollProgress(scrolled);
+      
+      if (scrolled > 0.1) {
+        document.body.classList.add("scrolled");
+      } else {
+        document.body.classList.remove("scrolled");
+      }
     };
     
     window.addEventListener("scroll", handleScroll);
@@ -49,17 +55,42 @@ export default function Navbar() {
     { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4 mr-2" /> },
   ];
 
+  // Dynamic styles based on scroll progress
+  const navBgStyle = {
+    backgroundColor: `rgba(255, 255, 255, ${scrollProgress * 0.95})`,
+    boxShadow: scrollProgress > 0.8 ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" : "none",
+  };
+
+  const gradientOpacity = 1 - scrollProgress;
+  const gradientStyle = {
+    opacity: gradientOpacity,
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: "linear-gradient(to right, rgba(30, 64, 175, 0.95), rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.95))",
+    zIndex: -1,
+    transition: "opacity 0.3s ease-in-out",
+  };
+
+  const textColorStyle = {
+    color: scrollProgress > 0.5 ? "rgb(30, 58, 138)" : "white",
+    transition: "color 0.3s ease-in-out",
+  };
+
+  const isScrolled = scrollProgress > 0.5;
+
   return (
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 50, damping: 20 }}
-      className={`fixed top-0 w-full z-50 backdrop-blur-sm transition-all duration-300 ${
-        isScrolled 
-          ? "bg-white/95 text-blue-900 shadow-lg" 
-          : "bg-gradient-to-r from-blue-800/95 via-blue-700/95 to-blue-600/95 text-white"
-      }`}
+      className="fixed top-0 w-full z-50 backdrop-blur-sm transition-all duration-100"
+      style={navBgStyle}
     >
+      <div style={gradientStyle}></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
@@ -80,9 +111,8 @@ export default function Navbar() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`ml-3 text-xl font-bold tracking-tight sm:text-2xl ${
-                  isScrolled ? "text-blue-800" : "text-white"
-                }`}
+                style={textColorStyle}
+                className="ml-3 text-xl font-bold tracking-tight sm:text-2xl"
               >
                 HIMSI
               </motion.span>
@@ -91,45 +121,64 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:items-center lg:ml-8 lg:space-x-1">
-            {navItems.map((item, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href={item.path}
-                  scroll={false}
-                  className={`relative flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 overflow-hidden group
-                    ${pathname === item.path 
-                      ? isScrolled ? "text-blue-700 font-semibold" : "text-white font-semibold" 
-                      : isScrolled ? "text-blue-600" : "text-blue-100"
-                    }`}
+            {navItems.map((item, idx) => {
+              // Dynamic styles for nav items
+              const isActive = pathname === item.path;
+              const navItemTextStyle = {
+                color: isActive 
+                  ? (isScrolled ? "rgb(29, 78, 216)" : "white")
+                  : (isScrolled ? "rgb(37, 99, 235)" : "rgb(219, 234, 254)"),
+                transition: "color 0.3s ease-in-out",
+              };
+              
+              const bgStyle = {
+                backgroundColor: isActive
+                  ? (isScrolled ? "rgba(219, 234, 254, 0.8)" : "rgba(37, 99, 235, 0.4)")
+                  : "transparent",
+                transition: "background-color 0.3s ease-in-out",
+              };
+              
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span className={`absolute inset-0 ${
-                    pathname === item.path 
-                      ? isScrolled ? "bg-blue-100" : "bg-blue-600/40" 
-                      : "bg-transparent group-hover:bg-blue-600/20"
-                    } rounded-md transition-all duration-300 ${
-                      isScrolled ? "group-hover:bg-blue-100" : "group-hover:bg-blue-600/40"
-                    }`}
-                  />
-                  <span className="relative flex items-center">
-                    {item.icon}
-                    {item.name}
-                  </span>
-                  {pathname === item.path && (
-                    <motion.span
-                      layoutId="navbar-indicator"
-                      className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-                        isScrolled ? "bg-blue-600" : "bg-white"
-                      }`}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  <Link
+                    href={item.path}
+                    scroll={false}
+                    className="relative flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 overflow-hidden group"
+                  >
+                    <span 
+                      className="absolute inset-0 rounded-md transition-all duration-300 group-hover:bg-opacity-40"
+                      style={{
+                        ...bgStyle,
+                        backgroundColor: isActive 
+                          ? bgStyle.backgroundColor
+                          : isScrolled 
+                            ? "rgba(219, 234, 254, 0)" 
+                            : "rgba(37, 99, 235, 0)",
+                      }}
                     />
-                  )}
-                </Link>
-              </motion.div>
-            ))}
+                    <span className="relative flex items-center" style={navItemTextStyle}>
+                      {item.icon}
+                      {item.name}
+                    </span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="navbar-indicator"
+                        className="absolute bottom-0 left-0 right-0 h-0.5"
+                        style={{
+                          backgroundColor: isScrolled ? "rgb(37, 99, 235)" : "white",
+                          transition: "background-color 0.3s ease-in-out",
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -138,12 +187,11 @@ export default function Navbar() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleMenu}
-              className={`p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
-                transition-colors duration-200 ${
-                  isScrolled 
-                    ? "text-blue-700 hover:bg-blue-100" 
-                    : "text-white hover:bg-blue-600/70"
-                }`}
+              style={{
+                color: isScrolled ? "rgb(29, 78, 216)" : "white",
+                transition: "color 0.3s ease-in-out",
+              }}
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-300"
               aria-label="Buka atau tutup menu"
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
@@ -163,36 +211,45 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             id="mobile-menu"
-            className={`lg:hidden ${
-              isScrolled 
-                ? "bg-white border-t border-gray-100" 
-                : "bg-gradient-to-b from-blue-700 to-blue-800"
-            } overflow-hidden`}
+            style={{
+              backgroundColor: isScrolled ? "white" : "rgba(29, 78, 216, 0.95)",
+              borderTop: isScrolled ? "1px solid rgba(243, 244, 246, 1)" : "1px solid rgba(37, 99, 235, 0.5)",
+              transition: "background-color 0.3s ease-in-out, border 0.3s ease-in-out",
+            }}
+            className="lg:hidden overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-0.5 max-h-[80vh] overflow-y-auto">
-              {navItems.map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  whileHover={{ x: 5 }}
-                >
-                  <Link
-                    href={item.path}
-                    scroll={false}
-                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 
-                      ${pathname === item.path 
-                        ? isScrolled ? "bg-blue-50 text-blue-700 font-semibold" : "bg-blue-600/50 text-white font-semibold" 
-                        : isScrolled ? "text-blue-700 hover:bg-blue-50" : "text-white hover:bg-blue-600/50"
-                      }`}
-                    onClick={() => setIsMenuOpen(false)}
+              {navItems.map((item, idx) => {
+                const isActive = pathname === item.path;
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    whileHover={{ x: 5 }}
                   >
-                    {item.icon}
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={item.path}
+                      scroll={false}
+                      style={{
+                        color: isActive
+                          ? (isScrolled ? "rgb(29, 78, 216)" : "white")
+                          : (isScrolled ? "rgb(37, 99, 235)" : "white"),
+                        backgroundColor: isActive
+                          ? (isScrolled ? "rgba(239, 246, 255, 0.8)" : "rgba(37, 99, 235, 0.5)")
+                          : "transparent",
+                        transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+                      }}
+                      className="flex items-center px-4 py-3 text-sm font-medium rounded-md transition-all duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.icon}
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         )}
