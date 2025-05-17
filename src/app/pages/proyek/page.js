@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/visitors/Footer";
 import { Code, Database, Globe, Server, Smartphone, Github, ExternalLink } from "lucide-react";
 
 const ProyekPage = () => {

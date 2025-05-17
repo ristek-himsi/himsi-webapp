@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/visitors/Footer";
 import { Calendar, Clock, MapPin, Users, ExternalLink } from "lucide-react";
 
 const AcaraPage = () => {

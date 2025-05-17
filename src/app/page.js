@@ -1,12 +1,12 @@
-import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import React from "react";
 import { Calendar, FileCode, Users, Trophy, Image } from "lucide-react";
 import Link from "next/link";
+import Footer from "@/components/visitors/Footer";
 
 const HomePage = () => {
   return (
-    <div className="bg-gradient-to-b from-blue-50 to-white mt-15">
+    <div className=" mt-15">
       <Navbar />
 
       {/* Hero Section */}

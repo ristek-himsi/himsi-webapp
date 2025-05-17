@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/visitors/Footer";
 import { Search, Calendar, User, Tag, ChevronRight } from "lucide-react";
 
 const BlogPage = () => {

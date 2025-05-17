@@ -1,59 +1,31 @@
-"use client";
+"use client"
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, User, LogIn, Calendar, Info, Home, FileCode, Users, Phone, Newspaper } from "lucide-react";
+import { Menu, X, Home, Calendar, FileCode, Users, Phone, Newspaper, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Memoized toggle functions
+  // Memoized toggle function
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
-    setIsDropdownOpen(false);
-  }, []);
-
-  const toggleDropdown = useCallback((e) => {
-    e.preventDefault();
-    setIsDropdownOpen((prev) => !prev);
-  }, []);
-
-  // Handle keyboard navigation for dropdown
-  const handleDropdownKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      setIsDropdownOpen((prev) => !prev);
-    }
-    if (e.key === "Escape") {
-      setIsDropdownOpen(false);
-    }
-  };
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Reset menu state and handle scroll effect
   useEffect(() => {
-    // Reset menu and dropdown on route change
+    // Reset menu on route change
     setIsMenuOpen(false);
-    setIsDropdownOpen(false);
-
+    
     // Update scroll state
     const handleScroll = () => {
-      window.scrollY > 10 ? document.body.classList.add("scrolled") : document.body.classList.remove("scrolled");
+      const scrolled = window.scrollY > 10;
+      setIsScrolled(scrolled);
+      scrolled ? document.body.classList.add("scrolled") : document.body.classList.remove("scrolled");
     };
     
     window.addEventListener("scroll", handleScroll);
@@ -75,141 +47,156 @@ export default function Navbar() {
     { name: "Berita", path: "/pages/news", icon: <Newspaper className="w-4 h-4 mr-2" /> },
     { name: "Kontak", path: "/pages/kontak", icon: <Phone className="w-4 h-4 mr-2" /> },
     { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4 mr-2" /> },
-
-  ];
-
-  const loginOptions = [
-    { label: "Admin Login", path: "/auth/admin/login", icon: <User className="w-4 h-4 mr-2" /> },
-    { label: "Ketua Divisi Login", path: "/auth/leader/login", icon: <User className="w-4 h-4 mr-2" /> },
-    { label: "Member Login", path: "/auth/member/login", icon: <User className="w-4 h-4 mr-2" /> },
   ];
 
   return (
-    <nav 
-      className="fixed top-0 w-full z-50 transition-all duration-300 bg-gradient-to-r from-blue-900 to-blue-700 text-white scrolled:bg-white scrolled:text-blue-900 scrolled:shadow-lg"
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 50, damping: 20 }}
+      className={`fixed top-0 w-full z-50 backdrop-blur-sm transition-all duration-300 ${
+        isScrolled 
+          ? "bg-white/95 text-blue-900 shadow-lg" 
+          : "bg-gradient-to-r from-blue-800/95 via-blue-700/95 to-blue-600/95 text-white"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          {/* Logo and Brand */}
           <div className="flex items-center">
             <Link href="/" scroll={false} className="flex-shrink-0 flex items-center group">
-              <div className="relative overflow-hidden rounded-full">
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="relative overflow-hidden rounded-full shadow-md"
+              >
                 <img
-                  className="h-10 w-auto transition-transform duration-300 group-hover:scale-110"
+                  className="h-10 w-auto"
                   src="/logo-himsi.png"
                   alt="HIMSI Logo"
                 />
-              </div>
-              <span className="ml-3 text-xl font-bold tracking-tight sm:text-2xl scrolled:text-blue-900">
+              </motion.div>
+              <motion.span 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className={`ml-3 text-xl font-bold tracking-tight sm:text-2xl ${
+                  isScrolled ? "text-blue-800" : "text-white"
+                }`}
+              >
                 HIMSI
-              </span>
+              </motion.span>
             </Link>
           </div>
 
-          <div className="hidden lg:flex lg:items-center lg:ml-8 lg:space-x-6">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex lg:items-center lg:ml-8 lg:space-x-1">
             {navItems.map((item, idx) => (
-              <Link
+              <motion.div
                 key={idx}
-                href={item.path}
-                scroll={false}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  pathname === item.path ? "underline underline-offset-4 font-bold" : ""
-                } hover:bg-blue-600/70 hover:text-white scrolled:hover:bg-blue-100 scrolled:hover:text-blue-800`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {item.icon}
-                {item.name}
-              </Link>
+                <Link
+                  href={item.path}
+                  scroll={false}
+                  className={`relative flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 overflow-hidden group
+                    ${pathname === item.path 
+                      ? isScrolled ? "text-blue-700 font-semibold" : "text-white font-semibold" 
+                      : isScrolled ? "text-blue-600" : "text-blue-100"
+                    }`}
+                >
+                  <span className={`absolute inset-0 ${
+                    pathname === item.path 
+                      ? isScrolled ? "bg-blue-100" : "bg-blue-600/40" 
+                      : "bg-transparent group-hover:bg-blue-600/20"
+                    } rounded-md transition-all duration-300 ${
+                      isScrolled ? "group-hover:bg-blue-100" : "group-hover:bg-blue-600/40"
+                    }`}
+                  />
+                  <span className="relative flex items-center">
+                    {item.icon}
+                    {item.name}
+                  </span>
+                  {pathname === item.path && (
+                    <motion.span
+                      layoutId="navbar-indicator"
+                      className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                        isScrolled ? "bg-blue-600" : "bg-white"
+                      }`}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative hidden lg:block" ref={dropdownRef}>
-              <button
-                onClick={toggleDropdown}
-                onKeyDown={handleDropdownKeyDown}
-                aria-expanded={isDropdownOpen}
-                aria-controls="dropdown-menu"
-                className="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 bg-white/10 hover:bg-white/20 scrolled:bg-blue-600 scrolled:text-white scrolled:hover:bg-blue-700"
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Login 
-                <ChevronDown 
-                  className={`ml-2 h-4 w-4 transition-transform duration-200 ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`} 
-                />
-              </button>
-              
-              {isDropdownOpen && (
-                <div
-                  id="dropdown-menu"
-                  className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-5 duration-200"
-                >
-                  {loginOptions.map((item, idx) => (
-                    <Link
-                      key={idx}
-                      href={item.path}
-                      scroll={false}
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition-colors duration-150"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button
+          {/* Mobile Menu Toggle */}
+          <div className="flex items-center">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleMenu}
-              className="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 text-white hover:bg-blue-600 scrolled:text-blue-900 scrolled:hover:bg-blue-100"
+              className={`p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
+                transition-colors duration-200 ${
+                  isScrolled 
+                    ? "text-blue-700 hover:bg-blue-100" 
+                    : "text-white hover:bg-blue-600/70"
+                }`}
               aria-label="Buka atau tutup menu"
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
 
-      <div 
-        id="mobile-menu"
-        className={`lg:hidden transition-all duration-300 ease-in-out transform ${
-          isMenuOpen 
-            ? "max-h-screen opacity-100 translate-y-0" 
-            : "max-h-0 opacity-0 -translate-y-4"
-        } bg-blue-800 scrolled:bg-white`}
-      >
-        <div className="px-4 pt-2 pb-6 space-y-1 max-h-[80vh] overflow-y-auto">
-          {navItems.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.path}
-              scroll={false}
-              className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
-                pathname === item.path ? "underline underline-offset-4 font-bold" : ""
-              } text-white hover:bg-blue-700 scrolled:text-blue-900 scrolled:hover:bg-blue-50`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.icon}
-              {item.name}
-            </Link>
-          ))}
-          {loginOptions.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.path}
-              scroll={false}
-              className="flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 text-white hover:bg-blue-700 scrolled:text-blue-900 scrolled:hover:bg-blue-50"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </nav>
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            id="mobile-menu"
+            className={`lg:hidden ${
+              isScrolled 
+                ? "bg-white border-t border-gray-100" 
+                : "bg-gradient-to-b from-blue-700 to-blue-800"
+            } overflow-hidden`}
+          >
+            <div className="px-4 pt-2 pb-6 space-y-0.5 max-h-[80vh] overflow-y-auto">
+              {navItems.map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  whileHover={{ x: 5 }}
+                >
+                  <Link
+                    href={item.path}
+                    scroll={false}
+                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-200 
+                      ${pathname === item.path 
+                        ? isScrolled ? "bg-blue-50 text-blue-700 font-semibold" : "bg-blue-600/50 text-white font-semibold" 
+                        : isScrolled ? "text-blue-700 hover:bg-blue-50" : "text-white hover:bg-blue-600/50"
+                      }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }

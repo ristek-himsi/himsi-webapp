@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }) {
       </main>
       <footer className="bg-white border-t border-gray-200 py-4">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">© {new Date().getFullYear()} HIMSI Admin Panel. All rights reserved.</p>
+          <p className="text-center text-sm text-gray-500">© {new Date().getFullYear()} HIMSI Division Leader Panel. All rights reserved.</p>
         </div>
       </footer>
     </div>

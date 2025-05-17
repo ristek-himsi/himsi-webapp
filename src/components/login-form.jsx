@@ -15,7 +15,9 @@ import { Label } from "@/components/ui/label"
 import { useFormStatus } from "react-dom"
 import { useActionState } from "react"
 import { signIn } from "@/lib/admin/action/login"
-import Link from "next/link"  // Added missing import
+import Link from "next/link"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ArrowLeftIcon } from "lucide-react"
 
 const initialState = {
   message: ""
@@ -24,7 +26,7 @@ const initialState = {
 const SubmitButton = () => {
   const { pending } = useFormStatus()
   return (
-    <Button disabled={pending} type="submit" className="w-full">
+    <Button disabled={pending} type="submit" className="w-full cursor-pointer">
       {pending ? "Loading..." : "Sign In"}
     </Button>
   )
@@ -35,6 +37,10 @@ export function LoginFormAdmin({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col max-w-md mx-auto", className)} {...props}>
+      <Link href="/" className="flex items-center gap-2 mb-4 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+        <ArrowLeftIcon size={16} />
+        <span>Kembali Ke Dashboard</span>
+      </Link>
       <Card className="shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
@@ -43,6 +49,11 @@ export function LoginFormAdmin({ className, ...props }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {state.message && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{state.message}</AlertDescription>
+            </Alert>
+          )}
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">

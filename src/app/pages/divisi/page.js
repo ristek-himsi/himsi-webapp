@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/visitors/Footer";
 import { Activity, Users, Code, ChartBar, Globe } from "lucide-react";
 
 const DivisiPage = () => {
