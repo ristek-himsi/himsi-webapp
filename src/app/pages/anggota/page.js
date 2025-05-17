@@ -1,6 +1,5 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/visitors/Footer";
 
 const AnggotaPage = () => {
   // Dummy data for members
@@ -140,8 +139,6 @@ const AnggotaPage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

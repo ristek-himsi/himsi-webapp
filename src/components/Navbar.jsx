@@ -47,12 +47,12 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Beranda", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-    { name: "Acara", path: "/pages/acara", icon: <Calendar className="w-4 h-4 mr-2" /> },
+    { name: "Events", path: "/events", icon: <Calendar className="w-4 h-4 mr-2" /> },
     { name: "Program", path: "/pages/program", icon: <FileCode className="w-4 h-4 mr-2" /> },
     { name: "Divisi", path: "/pages/divisi", icon: <Users className="w-4 h-4 mr-2" /> },
-    { name: "Berita", path: "/pages/news", icon: <Newspaper className="w-4 h-4 mr-2" /> },
-    { name: "Kontak", path: "/pages/kontak", icon: <Phone className="w-4 h-4 mr-2" /> },
-    { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4 mr-2" /> },
+    { name: "Berita & Informasi", path: "/info", icon: <Newspaper className="w-4 h-4 mr-2" /> },
+    { name: "Kontak", path: "/kontak", icon: <Phone className="w-4 h-4 mr-2" /> },
+    { name: "Tentang Kami", path: "/about", icon: <Info className="w-4 h-4 mr-2" /> },
   ];
 
   // Dynamic styles based on scroll progress

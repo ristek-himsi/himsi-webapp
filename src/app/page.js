@@ -29,7 +29,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center mb-8 md:mb-12">Why HIMSI Stands Out</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            <Link href="/pages/acara" className="group">
+            <Link href="/acara" className="group">
               <div className="text-center p-4 sm:p-6 bg-blue-50 rounded-lg transition-all duration-200 group-hover:shadow-md group-hover:bg-blue-100">
                 <Calendar className="w-10 h-10 md:w-12 md:h-12 text-blue-600 mx-auto mb-3 md:mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">Signature Events</h3>
@@ -162,7 +162,6 @@ const HomePage = () => {
           </a>
         </div>
       </section>
-
       <Footer />
     </div>
   );
