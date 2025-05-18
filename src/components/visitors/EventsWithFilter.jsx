@@ -1,30 +1,41 @@
 'use client';
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EventCard from "./EventCard";
 
 const EventsWithFilter = ({ initialEvents }) => {
   const [filter, setFilter] = useState("ALL");
+  const [isLoading, setIsLoading] = useState(true);
+  const [events, setEvents] = useState([]);
+  
+  useEffect(() => {
+    // Simulate loading time if needed or just set events directly
+    if (initialEvents) {
+      setEvents(initialEvents);
+      setIsLoading(false);
+    }
+  }, [initialEvents]);
+  
   const filteredEvents =
     filter === "ALL"
-      ? initialEvents
-      : initialEvents.filter((event) => event.status === filter);
+      ? events
+      : events.filter((event) => event.status === filter);
 
   return (
-    <div className="min-h-screen mt-6 py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div className="min-h-screen mt-8 py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4">
             Jelajahi Acara Kami
           </h1>
           <div className="w-16 h-1 bg-gray-300 mx-auto rounded-full"></div>
         </motion.div>
-
+        
         {/* Filter Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -53,8 +64,22 @@ const EventsWithFilter = ({ initialEvents }) => {
             </motion.button>
           ))}
         </motion.div>
-
-        {filteredEvents.length === 0 ? (
+        
+        {/* Loading State */}
+        {isLoading ? (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-12"
+          >
+            <div className="flex space-x-2 justify-center items-center">
+              <div className="h-4 w-4 bg-gray-800 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="h-4 w-4 bg-gray-800 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="h-4 w-4 bg-gray-800 rounded-full animate-bounce"></div>
+            </div>
+            <p className="text-gray-600 mt-4">Memuat acara...</p>
+          </motion.div>
+        ) : filteredEvents.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

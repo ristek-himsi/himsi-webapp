@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/visitors/Footer";
 import { Activity, Users, Code, ChartBar, Globe } from "lucide-react";
 
 const DivisiPage = () => {
@@ -33,8 +31,6 @@ const DivisiPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <Navbar />
-
       <main className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -65,8 +61,6 @@ const DivisiPage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
