@@ -9,7 +9,7 @@ const NotFoundPage = () => {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen mt-14 flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-slate-100 px-6 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-slate-100 px-6 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md bg-white rounded-2xl shadow-md overflow-hidden">
         {/* Top colored bar with blue gradient */}
         <div className="h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500"></div>

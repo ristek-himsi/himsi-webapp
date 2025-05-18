@@ -77,9 +77,6 @@ export default function EventDetailPage({ params }) {
             <Link href={`/admin/events/${id}/edit`} className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
               Edit Event
             </Link>
-            <Link href="/admin/events" className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-              Kembali
-            </Link>
           </div>
         </div>
 
