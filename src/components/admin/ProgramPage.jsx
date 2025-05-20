@@ -14,7 +14,7 @@ export const ProgramsPage = ({ programs, divisions }) => {
       : programs;
   
     return (
-      <div className="container mx-auto py-6 px-4">
+      <div className="mx-auto py-6 px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Program Management</h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">

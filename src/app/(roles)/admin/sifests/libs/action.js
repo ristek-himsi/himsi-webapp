@@ -177,15 +177,13 @@ export async function updateSifestAction(_, formData, sifestId) {
 
     return {
       message: "SIFest berhasil diperbarui",
-      error: false,
       success: true,
-      redirectUrl: `/admin/sifests/${sifestId}`,
+      redirectUrl: `/admin/sifests`,
     };
   } catch (error) {
     console.error("Error updating SIFest:", error);
     return {
       message: "Terjadi kesalahan: " + error.message,
-      error: true,
       success: false,
     };
   }

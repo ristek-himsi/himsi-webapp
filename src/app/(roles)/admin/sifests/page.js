@@ -3,6 +3,7 @@ import { getAllSifest } from "./libs/data";
 import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/supabase";
+import DeleteForm from "./components/DeleteForm";
 
 const Page = async () => {
   const sifests = await getAllSifest();
@@ -21,7 +22,7 @@ const Page = async () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Si Fest Events</h1>
-        <Link href="admin/sifests/create" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+        <Link href="/admin/sifests/create" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
           + Add New Si Fest
         </Link>
       </div>
@@ -61,11 +62,11 @@ const Page = async () => {
                   <Link href={`/admin/sifests/${sifest.id}`} className="text-blue-600 hover:text-blue-800">
                     View Details
                   </Link>
-                  <div className="space-x-2">
+                  <div className="space-x-2 flex">
                     <Link href={`/admin/sifests/edit/${sifest.id}`} className="text-green-600 hover:text-green-800">
                       Edit
                     </Link>
-                    <button className="text-red-600 hover:text-red-800">Delete</button>
+                    <DeleteForm id={sifest.id} />
                   </div>
                 </div>
               </div>

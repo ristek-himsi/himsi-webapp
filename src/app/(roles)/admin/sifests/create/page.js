@@ -9,10 +9,13 @@ const initialState = {
   message: "",
 };
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 const page = () => {
   const [state, formAction] = useActionState(addSifestAction, initialState);
   const [logoPreview, setLogoPreview] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
 
   const router = useRouter();
 
@@ -25,7 +28,18 @@ const page = () => {
   // Handle file selection and preview
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    setFileError("");
+
     if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        setLogoPreview(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+
       setFileName(file.name);
 
       // Create preview URL
@@ -43,6 +57,7 @@ const page = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">Tambah SI Fest</h1>
 
         {state.message && <div className={`p-4 mb-4 rounded-md ${state.success ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{state.message}</div>}
+        {fileError && <div className="p-4 mb-4 rounded-md bg-red-50 text-red-700">{fileError}</div>}
 
         <form action={formAction} className="space-y-5">
           <div className="space-y-1">
@@ -98,6 +113,7 @@ const page = () => {
                 </div>
 
                 {fileName && <p className="mt-2 text-sm text-gray-600 truncate max-w-xs">{fileName}</p>}
+                {fileError && <p className="mt-1 text-xs text-red-500">{fileError}</p>}
 
                 <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF hingga 1MB</p>
               </div>
@@ -124,6 +140,7 @@ const page = () => {
             <button
               type="submit"
               className="w-full sm:w-auto flex justify-center py-2 px-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={!!fileError}
             >
               Simpan
             </button>

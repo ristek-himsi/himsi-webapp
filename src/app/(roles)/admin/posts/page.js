@@ -61,7 +61,10 @@ const PostsContent = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Daftar Postingan</h1>
-          <button onClick={() => router.push("/admin/posts/create")} className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-full sm:w-auto text-center">
+          <button
+            onClick={() => router.push("/admin/posts/create")}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-full sm:w-auto text-center cursor-pointer"
+          >
             Tambah Postingan
           </button>
         </div>
@@ -110,7 +113,7 @@ const PostsContent = () => {
                 </div>
 
                 <div className="flex flex-row justify-center gap-2">
-                  <button onClick={() => router.push(`/admin/posts/${post.id}/edit`)} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-1/2">
+                  <button onClick={() => router.push(`/admin/posts/${post.id}/edit`)} className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-1/2 cursor-pointer">
                     Edit
                   </button>
                   <DeletePostForm id={post?.id} />

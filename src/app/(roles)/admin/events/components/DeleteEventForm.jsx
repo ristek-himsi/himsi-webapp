@@ -27,7 +27,7 @@ const DeleteEventForm = ({id}) => {
         <form action={formAction} >
              <button
             type='submit'
-              className="text-red-500 hover:text-red-700"
+              className="text-red-500 hover:text-red-700 cursor-pointer"
               title="Hapus event">
               <svg
                 className="w-5 h-5"

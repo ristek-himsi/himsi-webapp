@@ -30,7 +30,7 @@ const DivisionsContent = async () => {
 // Main Page Component dengan Suspense
 const DivisionsPage = () => {
   return (
-    <div className="p-6 mt-14">
+    <div className="p-6 mt-14 bg-gradient-to-b from-blue-50 via-white to-blue-50">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-center">Divisi Organisasi</h1>
         <p className="text-gray-600 text-center mt-2">Mengenal berbagai divisi dalam organisasi kami</p>

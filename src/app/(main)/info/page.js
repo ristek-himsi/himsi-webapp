@@ -29,7 +29,7 @@ const PostsPage = async ({ searchParams }) => {
       : publishedPosts;
 
   return (
-    <div className="p-4 sm:p-6 mt-14">
+    <div className="p-4 sm:p-6 mt-14 bg-gradient-to-b from-blue-50 via-white to-blue-50">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Halaman Info</h1>
 
       {/* Category Filter (Client Component) */}

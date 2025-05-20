@@ -226,7 +226,7 @@ const AchievementsList = () => {
                       <div role="cell" className="px-3 lg:px-4 py-2 lg:py-3 flex gap-2 w-32 lg:w-48">
                         <button
                           onClick={() => router.push(`/admin/achievements/${achievement.id}/edit`)}
-                          className="px-2 lg:px-3 py-1 lg:py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors flex items-center justify-center flex-1"
+                          className="px-2 cursor-pointer lg:px-3 py-1 lg:py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors flex items-center justify-center flex-1"
                         >
                           <Pencil className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1" /> Edit
                         </button>
@@ -249,7 +249,7 @@ const AchievementsPage = () => {
   const router = useRouter();
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+    <div className="space-y-4 sm:space-y-6 px-3 sm:px-4 py-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-1 py-2 sm:p-3 sm:gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Daftar Pencapaian</h1>
@@ -257,7 +257,7 @@ const AchievementsPage = () => {
         </div>
         <button
           onClick={() => router.push("/admin/achievements/create")}
-          className="inline-flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+          className="inline-flex cursor-pointer items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
         >
           <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
           Tambah Pencapaian

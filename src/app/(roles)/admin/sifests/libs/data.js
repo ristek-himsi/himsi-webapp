@@ -11,3 +11,46 @@ export async function getAllSifest() {
     };
   }
 }
+
+export async function getSifestById(id) {
+  try {
+    const sifest = await prisma.sIFest.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return sifest;
+  } catch (e) {
+    console.error(e);
+    return {
+      message: "gagal mengabil data si fest by id",
+    };
+  }
+}
+
+export async function getSifestDetail(id) {
+  try {
+    const sifest = await prisma.sIFest.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        events: {
+          include: {
+            gallery: true,
+          },
+          orderBy: {
+            startDate: "asc",
+          },
+        },
+      },
+    });
+
+    return sifest;
+  } catch (e) {
+    console.error(e);
+    return {
+      message: "gagal mengambil detail sifest",
+    };
+  }
+}
