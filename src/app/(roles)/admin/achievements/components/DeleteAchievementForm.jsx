@@ -27,7 +27,7 @@ const DeleteAchievementForm = ({id}) => {
             {/* {state.message && <div>{state.message}</div>} */}
             <button 
                 type='submit'
-                className="px-3 py-1.5 bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center w-full justify-center">
+                className="px-3 text-xs sm:text-sm py-1.5 bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center w-full justify-center">
                 <Trash2 className="w-4 h-4 mr-1" /> Hapus
             </button>
         </form>
