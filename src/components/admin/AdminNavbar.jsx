@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 // Import actions
 import { logout } from "@/lib/admin/action/logout";
 // Import icons from lucide-react
-import { Menu, User, LogOut, ChevronDown, X, Home, Users, Building2, Layers, CalendarRange, FileText, Trophy } from "lucide-react";
+import { Menu, User, LogOut, ChevronDown, X, Home, Users, Building2, Layers, CalendarRange, FileText, Trophy, CalendarHeart } from "lucide-react";
 import { getImageUrl } from "@/lib/supabase";
 
 // Logout form component with useActionState
@@ -107,6 +107,7 @@ export default function AdminNavbar({ user }) {
     { name: "Divisions", href: "/admin/divisions", icon: <Layers size={16} /> },
     { name: "Programs", href: "/admin/programs", icon: <FileText size={16} /> },
     { name: "Events", href: "/admin/events", icon: <CalendarRange size={16} /> },
+    { name: "SI Fest", href: "/admin/sifests" , icon : <CalendarHeart size={16} />},
     { name: "Posts", href: "/admin/posts", icon: <FileText size={16} /> },
     { name: "Achievement", href: "/admin/achievements", icon: <Trophy size={16} /> },
   ];

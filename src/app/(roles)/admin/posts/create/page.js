@@ -14,10 +14,16 @@ const CreatePostPage = () => {
   const [users, setUsers] = useState([]);
   const router = useRouter();
   const [state, formAction] = useActionState(addPostAction, initialState);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (state.success && state.redirectUrl) {
       router.push(state.redirectUrl);
+    }
+
+    // Update local error state when receiving error message from server action
+    if (state.message) {
+      setError(state.message);
     }
   }, [state, router]);
 
@@ -30,21 +36,47 @@ const CreatePostPage = () => {
           setUsers(json.data);
         } else {
           console.error("Users fetch error:", json.message);
+          setError(json.message);
         }
       } catch (error) {
         console.error("Unexpected fetch error:", error);
+        setError("Gagal memuat data pengguna");
       }
     };
 
     fetchUsers();
   }, []);
 
+  // Custom form submission handler
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    // Basic client-side validation for file size
+    const imageFile = formData.get("imageUrl");
+    if (imageFile && imageFile.size > 0) {
+      const MAX_FILE_SIZE = 500 * 1024; // 500KB - must match server-side validation
+      if (imageFile.size > MAX_FILE_SIZE) {
+        setError(`Ukuran file terlalu besar. Maksimum ${MAX_FILE_SIZE / 1024}KB.`);
+        return;
+      }
+    }
+
+    // Clear any previous errors
+    setError("");
+
+    // Submit the form using the action
+    formAction(formData);
+  };
+
   return (
     <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6">Tambah Postingan Baru</h1>
-      {state.message && <div className="p-3 mb-4 bg-red-100 text-red-700 rounded-md">{state.message}</div>}
 
-      <form action={formAction} className="space-y-4">
+      {/* Display error message */}
+      {error && <div className="p-3 mb-4 bg-red-100 text-red-700 rounded-md">{error}</div>}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col">
           <label htmlFor="title" className="text-sm font-medium mb-1">
             Judul
@@ -63,7 +95,25 @@ const CreatePostPage = () => {
           <label htmlFor="imageUrl" className="text-sm font-medium mb-1">
             Gambar Postingan
           </label>
-          <input type="file" id="imageUrl" name="imageUrl" className="border rounded-md p-2" />
+          <input
+            type="file"
+            id="imageUrl"
+            name="imageUrl"
+            className="border rounded-md p-2"
+            onChange={(e) => {
+              // Client-side validation for immediate feedback
+              const file = e.target.files[0];
+              if (file) {
+                const MAX_FILE_SIZE = 500 * 1024; // 500KB
+                if (file.size > MAX_FILE_SIZE) {
+                  setError(`Ukuran file terlalu besar. Maksimum ${MAX_FILE_SIZE / 1024}KB.`);
+                } else {
+                  setError(""); // Clear error if file is valid
+                }
+              }
+            }}
+          />
+          <p className="text-xs text-gray-500 mt-1">Maksimum 500KB</p>
         </div>
 
         <div className="flex flex-col">
