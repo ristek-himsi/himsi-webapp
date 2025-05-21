@@ -14,13 +14,16 @@ const initialState = {
   redirectUrl: null
 };
 
-const SubmitButton = () => {
+// Define maximum file size (1MB)
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
+const SubmitButton = ({ disabled }) => {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
-      disabled={pending}
-      className="inline-flex cursor-pointer items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      disabled={pending || disabled}
+      className="inline-flex cursor-pointer items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Save className="h-4 w-4 mr-1" />
       {pending ? 'Menyimpan...' : 'Simpan Perubahan'}
@@ -30,8 +33,10 @@ const SubmitButton = () => {
 
 const UserEditForm = ({ user, divisions}) => {
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
 
-  const updateUserById = (_,formData) => updateUser(_, formData,user?.id)
+  const updateUserById = (_, formData) => updateUser(_, formData, user?.id);
 
   const [state, formAction] = useActionState(updateUserById, initialState);
   const router = useRouter();
@@ -55,14 +60,47 @@ const UserEditForm = ({ user, divisions}) => {
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
+    setFileError("");
+    
     if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        // Reset to previous photo or null
+        if (user?.photo_url) {
+          if (user.photo_url.startsWith('http')) {
+            setPhotoPreview(user.photo_url);
+          } else {
+            setPhotoPreview(getImageUrl(user.photo_url, 'users'));
+          }
+        } else {
+          setPhotoPreview(null);
+        }
+        e.target.value = null; // Reset file input
+        return;
+      }
+      
+      setFileName(file.name);
+      
+      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result);
       };
       reader.readAsDataURL(file);
     } else {
-      setPhotoPreview(user?.photo_url ? getImageUrl(user.photo_url, 'users') : null);
+      // Reset to previous photo or null if no file selected
+      if (user?.photo_url) {
+        if (user.photo_url.startsWith('http')) {
+          setPhotoPreview(user.photo_url);
+        } else {
+          setPhotoPreview(getImageUrl(user.photo_url, 'users'));
+        }
+      } else {
+        setPhotoPreview(null);
+      }
+      setFileName("");
     }
   };
 
@@ -99,6 +137,25 @@ const UserEditForm = ({ user, divisions}) => {
               />
             </svg>
             <span>{state.message}</span>
+          </div>
+        )}
+
+        {fileError && (
+          <div role="alert" className="alert alert-error mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{fileError}</span>
           </div>
         )}
 
@@ -176,7 +233,8 @@ const UserEditForm = ({ user, divisions}) => {
                 className="hidden"
                 onChange={handlePhotoChange}
               />
-              <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF hingga 2MB</p>
+              {fileName && <p className="mt-2 text-sm text-gray-600 truncate max-w-xs">{fileName}</p>}
+              <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF hingga 1MB</p>
             </div>
           </div>
         </div>
@@ -199,7 +257,6 @@ const UserEditForm = ({ user, divisions}) => {
               <option value="ADMIN">Admin</option>
               <option value="DIVISION_LEADER">Pemimpin Divisi</option>
               <option value="MEMBER">Anggota</option>
-
             </select>
           </div>
         </div>
@@ -299,7 +356,7 @@ const UserEditForm = ({ user, divisions}) => {
         >
           Batal
         </a>
-        <SubmitButton />
+        <SubmitButton disabled={!!fileError} />
       </div>
     </form>
   );

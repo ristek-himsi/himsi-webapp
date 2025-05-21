@@ -30,12 +30,12 @@ export default function Footer() {
   // Daftar navigasi untuk footer yang sesuai dengan navbar
   const footerNavItems = [
     { name: "Beranda", path: "/", icon: <Home className="w-4 h-4" /> },
-    { name: "Acara", path: "/pages/acara", icon: <Calendar className="w-4 h-4" /> },
-    { name: "Program", path: "/pages/program", icon: <FileCode className="w-4 h-4" /> },
-    { name: "Divisi", path: "/pages/divisi", icon: <Users className="w-4 h-4" /> },
-    { name: "Berita", path: "/pages/news", icon: <Newspaper className="w-4 h-4" /> },
-    { name: "Kontak", path: "/pages/kontak", icon: <Phone className="w-4 h-4" /> },
-    { name: "Tentang Kami", path: "/pages/about", icon: <Info className="w-4 h-4" /> },
+    { name: "Acara", path: "/events", icon: <Calendar className="w-4 h-4" /> },
+    { name: "Program", path: "/programs", icon: <FileCode className="w-4 h-4" /> },
+    { name: "Divisi", path: "/divisi", icon: <Users className="w-4 h-4" /> },
+    { name: "Berita & Informasi", path: "/info", icon: <Newspaper className="w-4 h-4" /> },
+    { name: "Kontak", path: "/kontak", icon: <Phone className="w-4 h-4" /> },
+    { name: "Tentang Kami", path: "/about", icon: <Info className="w-4 h-4" /> },
   ];
 
   return (

@@ -9,11 +9,16 @@ const initialState = {
   message: "",
 };
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 const EventForm = () => {
   const router = useRouter();
   const [state, formAction] = useActionState(addEventAction, initialState);
   const [siFest, setSiFest] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
 
   // Redirect jika operasi berhasil
   useEffect(() => {
@@ -21,6 +26,32 @@ const EventForm = () => {
       router.push(state.redirectUrl);
     }
   }, [state, router]);
+
+  // Handle file selection and preview
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFileError("");
+
+    if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        setImagePreview(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+
+      setFileName(file.name);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     const fetchingData = async () => {
@@ -45,6 +76,7 @@ const EventForm = () => {
 
       {/* Pesan error atau sukses */}
       {state.message && <div className={`p-4 mb-6 rounded-md ${state.success ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{state.message}</div>}
+      {fileError && <div className="p-4 mb-6 rounded-md bg-red-100 text-red-700">{fileError}</div>}
 
       <form action={formAction} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,8 +101,20 @@ const EventForm = () => {
             <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
               Gambar Event <span className="text-red-500">*</span>
             </label>
-            <input type="file" id="imageUrl" name="imageUrl" accept="image/*" required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-            <p className="text-xs text-gray-500 mt-1">*Ukuran maksimum file: 2MB</p>
+            <div className="mt-1 flex items-center">
+              {/* Preview gambar */}
+              {imagePreview && (
+                <div className="h-24 w-24 rounded-md overflow-hidden bg-gray-100 mr-4 border flex items-center justify-center">
+                  <img src={imagePreview} alt="Image Preview" className="h-full w-full object-cover" />
+                </div>
+              )}
+
+              <div className="flex flex-col">
+                <input type="file" id="imageUrl" name="imageUrl" accept="image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" required />
+                {fileName && <p className="mt-2 text-sm text-gray-600 truncate max-w-xs">{fileName}</p>}
+                <p className="text-xs text-gray-500 mt-1">*Ukuran maksimum file: 1MB</p>
+              </div>
+            </div>
           </div>
 
           {/* Tanggal Mulai */}
@@ -184,7 +228,7 @@ const EventForm = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end mt-6">
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" disabled={!!fileError}>
             Simpan Event
           </button>
         </div>

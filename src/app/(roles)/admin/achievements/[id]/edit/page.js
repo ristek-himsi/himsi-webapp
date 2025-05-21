@@ -12,6 +12,8 @@ const initialState = {
   success: false,
 };
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 const EditAchievementPage = ({ params }) => {
   const unwrappedParams = React.use(params);
   const id = unwrappedParams.id;
@@ -21,6 +23,9 @@ const EditAchievementPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [state, formAction] = useActionState((prevState, formData) => updateAchievementAction(prevState, formData, id), initialState);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
 
   useEffect(() => {
     if (state.success && state.redirectUrl) {
@@ -64,6 +69,32 @@ const EditAchievementPage = ({ params }) => {
     if (imageUrl.startsWith("http")) return imageUrl;
     const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
     return getImageUrl(fileName, "achievements");
+  };
+
+  // Handle file selection and preview
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFileError("");
+
+    if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        setImagePreview(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+
+      setFileName(file.name);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (loading) {
@@ -124,6 +155,7 @@ const EditAchievementPage = ({ params }) => {
         </div>
 
         {state.message && <div className="p-3 mb-4 bg-red-50 text-red-700 rounded-lg border-l-4 border-red-500">{state.message}</div>}
+        {fileError && <div className="p-3 mb-4 bg-red-50 text-red-700 rounded-lg border-l-4 border-red-500">{fileError}</div>}
 
         <form action={formAction} className="space-y-6">
           <div className="flex flex-col">
@@ -190,22 +222,27 @@ const EditAchievementPage = ({ params }) => {
             </label>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="w-20 h-20 relative border border-gray-300 rounded-lg overflow-hidden bg-gray-50 shrink-0">
-                <Image src={getAchievementImageUrl(achievement?.imageUrl)} alt="Gambar Pencapaian" fill className="object-cover" />
+                {imagePreview ? <img src={imagePreview} alt="Gambar Preview" className="object-cover w-full h-full" /> : <Image src={getAchievementImageUrl(achievement?.imageUrl)} alt="Gambar Pencapaian" fill className="object-cover" />}
               </div>
               <div className="w-full">
-                <input
-                  type="file"
-                  id="imageUrl"
-                  name="imageUrl"
-                  className="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-                <p className="text-xs text-gray-500 mt-2">Biarkan kosong jika tidak ingin mengubah gambar</p>
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="imageUrl"
+                    name="imageUrl"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                </div>
+                {fileName && <p className="mt-2 text-sm text-gray-600 truncate max-w-xs">{fileName}</p>}
+                <p className="text-xs text-gray-500 mt-2">PNG, JPG, GIF hingga 1MB. Biarkan kosong jika tidak ingin mengubah gambar.</p>
               </div>
             </div>
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-4">
-            <button type="submit" className="w-full cursor-pointer bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+            <button type="submit" className="w-full cursor-pointer bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" disabled={!!fileError}>
               Simpan Perubahan
             </button>
           </div>

@@ -15,6 +15,9 @@ const initialState = {
   redirectUrl: null,
 };
 
+// Define maximum file size (1MB)
+const MAX_FILE_SIZE = 1 * 1024 * 1024;
+
 const EditButton = () => {
   const { pending } = useFormStatus();
   return (
@@ -32,6 +35,7 @@ export default function EditEventPage({ params }) {
   const [newImage, setNewImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fileError, setFileError] = useState(""); // Add state for file error messages
 
   const [state, formAction] = useActionState(async (prevState, formData) => {
     try {
@@ -102,8 +106,20 @@ export default function EditEventPage({ params }) {
   const eventImagePreview = getImageUrl(event?.imageUrl, "events");
 
   const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setNewImage(e.target.files[0]);
+    const file = e.target.files && e.target.files[0];
+    setFileError(""); // Clear previous errors
+
+    if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setNewImage(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+
+      // If file size is valid, set the new image
+      setNewImage(file);
     }
   };
 
@@ -139,6 +155,9 @@ export default function EditEventPage({ params }) {
         </div>
 
         {state.message && <div className={`p-3 mb-5 rounded-lg text-sm font-medium ${state.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{state.message}</div>}
+
+        {/* Display file error message if present */}
+        {fileError && <div className="p-3 mb-5 rounded-lg text-sm font-medium bg-red-100 text-red-800">{fileError}</div>}
 
         <form action={formAction} className="space-y-5">
           <div className="flex flex-col">
@@ -269,6 +288,8 @@ export default function EditEventPage({ params }) {
               />
             </div>
             <p className="text-xs text-gray-500">Biarkan kosong jika tidak ingin mengubah gambar</p>
+            {/* Add file size information */}
+            <p className="text-xs text-gray-500 mt-1">Format: PNG, JPG, GIF hingga 1MB</p>
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">

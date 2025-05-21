@@ -12,6 +12,9 @@ const initialState = {
   redirectUrl: null
 };
 
+// Define maximum file size (1MB)
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
@@ -29,10 +32,26 @@ const SubmitButton = () => {
 const UserAddForm = ({ divisions }) => {
   const [state, formAction] = useActionState(addUser, initialState);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
+    setFileError("");
+    
     if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        setPhotoPreview(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+      
+      setFileName(file.name);
+      
+      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result);
@@ -40,6 +59,7 @@ const UserAddForm = ({ divisions }) => {
       reader.readAsDataURL(file);
     } else {
       setPhotoPreview(null);
+      setFileName("");
     }
   };
 
@@ -64,6 +84,25 @@ const UserAddForm = ({ divisions }) => {
               />
             </svg>
             <span>{state.message}</span>
+          </div>
+        )}
+
+        {fileError && (
+          <div role="alert" className="alert alert-error mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{fileError}</span>
           </div>
         )}
 
@@ -139,7 +178,8 @@ const UserAddForm = ({ divisions }) => {
                 className="hidden"
                 onChange={handlePhotoChange}
               />
-              <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF hingga 2MB</p>
+              {fileName && <p className="mt-2 text-sm text-gray-600 truncate max-w-xs">{fileName}</p>}
+              <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF hingga 1MB</p>
             </div>
           </div>
         </div>
@@ -162,7 +202,6 @@ const UserAddForm = ({ divisions }) => {
               <option value="ADMIN">Admin</option>
               <option value="DIVISION_LEADER">Pemimpin Divisi</option>
               <option value="MEMBER">Anggota</option>
-
             </select>
           </div>
         </div>
@@ -262,7 +301,7 @@ const UserAddForm = ({ divisions }) => {
         >
           Batal
         </a>
-        <SubmitButton />
+        <SubmitButton disabled={!!fileError} />
       </div>
     </form>
   );

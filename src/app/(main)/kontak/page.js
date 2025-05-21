@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Mail, Instagram, MessageCircle } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -14,8 +13,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen mt-10 sm:mt-6 bg-gradient-to-b from-blue-50 to-white">
-      <Navbar />
-
       {/* Header */}
       <motion.div initial="hidden" animate="visible" variants={fadeIn} className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

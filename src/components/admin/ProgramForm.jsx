@@ -1,3 +1,5 @@
+// ProgramForm.jsx - Updated with file size validation
+
 "use client"
 
 import React, { useEffect, useState } from 'react';
@@ -11,6 +13,9 @@ const initialState = {
   error: false,
   redirectUrl: null
 };
+
+// Define max file size as a constant (1MB)
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
 
 // Submit button component with loading state
 const SubmitButton = () => {
@@ -40,6 +45,9 @@ const SubmitButton = () => {
 const ProgramForm = ({ divisions }) => {
   const [state, formAction] = useActionState(addProgramAction, initialState);
   const [imagePreview, setImagePreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [isFormValid, setIsFormValid] = useState(true);
 
   // Redirect user if needed after successful form submission
   useEffect(() => {
@@ -48,13 +56,29 @@ const ProgramForm = ({ divisions }) => {
     }
   }, [state]);
 
-  // Handler untuk menampilkan preview gambar saat dipilih
+  // Handler untuk menampilkan preview gambar saat dipilih dengan validasi ukuran file
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    setFileError("");
+    
     if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setImagePreview(null);
+        setFileName("");
+        setIsFormValid(false);
+        e.target.value = null; // Reset file input
+        return;
+      }
+      
+      setFileName(file.name);
+      setIsFormValid(true);
+      
+      // Create preview URL
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
       };
       reader.readAsDataURL(file);
     }
@@ -106,7 +130,25 @@ const ProgramForm = ({ divisions }) => {
                 onChange={handleImageChange}
                 required
               />
-              {imagePreview && (
+              
+              {/* Display file name if provided */}
+              {fileName && <p className="text-sm text-gray-600">{fileName}</p>}
+              
+              {/* Display file size error if any */}
+              {fileError && (
+                <div className="p-3 mt-1 rounded-md bg-red-50 text-red-700 text-sm border border-red-200">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {fileError}
+                  </div>
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500">PNG, JPG, GIF hingga 1MB</p>
+              
+              {imagePreview && !fileError && (
                 <div className="mt-3">
                   <p className="text-sm text-gray-500 mb-2">Preview:</p>
                   <img 
@@ -215,7 +257,13 @@ const ProgramForm = ({ divisions }) => {
         )}
 
         <div className="pt-6 flex justify-end">
-          <SubmitButton />
+          <button 
+            type="submit" 
+            className="bg-indigo-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center disabled:bg-indigo-400 disabled:cursor-not-allowed font-medium shadow-sm"
+            disabled={!isFormValid}
+          >
+            <SubmitButton />
+          </button>
         </div>
       </form>
     </div>

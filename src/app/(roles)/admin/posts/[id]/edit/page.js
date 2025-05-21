@@ -12,6 +12,8 @@ const initialState = {
   success: false,
 };
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 const EditPostPage = ({ params }) => {
   const unwrappedParams = React.use(params);
   const id = unwrappedParams.id;
@@ -20,8 +22,25 @@ const EditPostPage = ({ params }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fileError, setFileError] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [fileName, setFileName] = useState("");
 
-  const [state, formAction] = useActionState((prevState, formData) => updatePostAction(prevState, formData, id), initialState);
+  const [state, formAction] = useActionState((prevState, formData) => {
+    // Check if there's an image file in the formData and validate its size
+    const imageFile = formData.get("imageUrl");
+    if (imageFile && imageFile.size > 0) {
+      if (imageFile.size > MAX_FILE_SIZE) {
+        return {
+          ...prevState,
+          message: "Ukuran file tidak boleh melebihi 1MB",
+          success: false,
+        };
+      }
+    }
+    // If file is valid or there's no file, proceed with the original action
+    return updatePostAction(prevState, formData, id);
+  }, initialState);
 
   useEffect(() => {
     if (state.success && state.redirectUrl) {
@@ -65,6 +84,32 @@ const EditPostPage = ({ params }) => {
     if (imageUrl.startsWith("http")) return imageUrl;
     const fileName = imageUrl.includes("/") ? imageUrl.split("/").pop() : imageUrl;
     return getImageUrl(fileName, "posts");
+  };
+
+  // Handle file selection and preview
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFileError("");
+
+    if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 1MB");
+        setFileName("");
+        setImagePreview(null);
+        e.target.value = null; // Reset file input
+        return;
+      }
+
+      setFileName(file.name);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (loading) {
@@ -159,17 +204,25 @@ const EditPostPage = ({ params }) => {
               Gambar Postingan
             </label>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              {/* Current image or preview of new image */}
               <div className="w-20 h-20 relative border border-gray-300 rounded-lg overflow-hidden bg-gray-50 shrink-0">
-                <Image src={getPostImageUrl(post?.imageUrl)} alt="Gambar Postingan" fill className="object-cover" />
+                {imagePreview ? <img src={imagePreview} alt="Preview Gambar" className="object-cover w-full h-full" /> : <Image src={getPostImageUrl(post?.imageUrl)} alt="Gambar Postingan" fill className="object-cover" />}
               </div>
+
               <div className="w-full">
-                <input
-                  type="file"
-                  id="imageUrl"
-                  name="imageUrl"
-                  className="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-                <p className="text-xs text-gray-500 mt-2">Biarkan kosong jika tidak ingin mengubah gambar</p>
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="imageUrl"
+                    name="imageUrl"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                </div>
+                {fileName && <p className="text-sm text-gray-600 mt-1">{fileName}</p>}
+                {fileError && <p className="text-xs text-red-500 mt-1">{fileError}</p>}
+                <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF hingga 1MB. Biarkan kosong jika tidak ingin mengubah gambar.</p>
               </div>
             </div>
           </div>
@@ -213,7 +266,7 @@ const EditPostPage = ({ params }) => {
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-4">
-            <button type="submit" className="w-full bg-blue-600 cursor-pointer text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+            <button type="submit" className="w-full bg-blue-600 cursor-pointer text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed" disabled={!!fileError}>
               Simpan Perubahan
             </button>
           </div>
