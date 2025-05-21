@@ -9,7 +9,6 @@ const PostDetailPage = async ({ params }) => {
   const id = params.id;
   const postResponse = await getPostDetail(id);
 
-  // Handle error state
   if (!postResponse?.success || !postResponse?.data) {
     return (
       <div className="container mx-auto px-4 py-8 mt-10">
@@ -34,13 +33,11 @@ const PostDetailPage = async ({ params }) => {
   // Function to format content paragraphs
   const formatContent = (content) => {
     if (!content) return [];
-    // Split by both \r\n\r\n and \n\n to handle different line break formats
     return content.split(/\r\n\r\n|\n\n/).filter((para) => para.trim().length > 0);
   };
 
   const paragraphs = formatContent(post.content);
 
-  // Function to determine category color class
   const getCategoryColorClass = (category) => {
     switch (category) {
       case "NEWS":
@@ -56,8 +53,7 @@ const PostDetailPage = async ({ params }) => {
 
   return (
     <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 mt-14 sm:mt-14">
-      {/* Back Button */}
-      <Link href="/posts" className="text-indigo-600 hover:text-indigo-800 flex items-center mb-4 sm:mb-6 text-xs sm:text-sm">
+      <Link href="/info" className="text-indigo-600 hover:text-indigo-800 flex items-center mb-4 sm:mb-6 text-xs sm:text-sm">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
@@ -130,7 +126,6 @@ const PostDetailPage = async ({ params }) => {
             </div>
           )}
 
-          {/* Additional Metadata */}
           <div className="mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 flex flex-col sm:flex-row sm:justify-between">
             <p>ID Post: {post.id}</p>
             <p>Terakhir diubah: {format(new Date(post.updatedAt), "dd MMMM yyyy, HH:mm")}</p>

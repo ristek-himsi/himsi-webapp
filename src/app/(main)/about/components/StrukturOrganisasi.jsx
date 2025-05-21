@@ -1,20 +1,36 @@
 'use client';
 
 import { getImageUrl } from '@/lib/supabase';
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { motion } from "framer-motion";
+import Loading from '@/app/loading';
 
-const StrukturOrganisasi = () => {
+// Error boundary component
+const ErrorDisplay = ({ error }) => (
+  <div className="p-8 max-w-3xl mx-auto">
+    <div className="bg-red-50 p-6 rounded-lg border border-red-200 shadow-sm">
+      <div className="flex items-center">
+        <svg className="w-10 h-10 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <h3 className="text-lg font-semibold text-red-800">Unable to load organization structure</h3>
+          <p className="text-red-600">{error}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Main content component that fetches and displays data
+const OrganizationContent = () => {
   const [organizationData, setOrganizationData] = useState(null);
   const [divisionsData, setDivisionsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        
         // Fetch organization structure
         const orgResponse = await fetch('/api/organization');
         if (!orgResponse.ok) {
@@ -32,44 +48,17 @@ const StrukturOrganisasi = () => {
         
         setOrganizationData(orgData);
         setDivisionsData(divisionsData);
-        setIsLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(err.message);
-        setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="p-8 flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-blue-600 font-medium">Loading organization data...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
-    return (
-      <div className="p-8 max-w-3xl mx-auto">
-        <div className="bg-red-50 p-6 rounded-lg border border-red-200 shadow-sm">
-          <div className="flex items-center">
-            <svg className="w-10 h-10 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <div>
-              <h3 className="text-lg font-semibold text-red-800">Unable to load organization structure</h3>
-              <p className="text-red-600">{error}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorDisplay error={error} />;
   }
 
   if (!organizationData) {
@@ -304,86 +293,43 @@ const StrukturOrganisasi = () => {
           </div>
         </div>
       </motion.div>
-      
-      {/* Division Details Section */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-        variants={fadeInUp}
-        className="mb-12"
-      >
-        <h3 className="text-2xl font-bold text-center mb-8 text-gray-900 relative inline-block">
-          Divisi
-          <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {divisionsData && divisionsData.map((division) => (
-            <motion.div
-              key={division.id}
-              whileHover={{ y: -5 }}
-              className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300"
-            >
-              <div className="h-3 bg-gradient-to-r from-blue-400 to-blue-600"></div>
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  {division.logoUrl ? (
-                    <img 
-                      src={getImageUrl(division.logoUrl, "divisions")} 
-                      alt={division.name}
-                      className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-100"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-bold mr-4">
-                      {division.name.charAt(0)}
-                    </div>
-                  )}
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900">{division.name}</h4>
-                    <p className="text-sm text-blue-600">{division.memberCount} Anggota</p>
-                  </div>
-                </div>
-                
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">{division.description}</p>
-                
-                {division.leader && (
-                  <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
-                    {division.leader.photo_url ? (
-                      <img 
-                        src={getImageUrl(division.leader.photo_url, "users")} 
-                        alt={division.leader.name}
-                        className="w-10 h-10 rounded-full object-cover mr-3 border-2 border-blue-100"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-bold mr-3">
-                        {division.leader.name.charAt(0)}
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">{division.leader.name}</p>
-                      <p className="text-xs text-gray-500">Ketua Divisi</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-      
-      {/* Contact button */}
-      <div className="text-center">
-        <button className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-          </svg>
-          Hubungi Pengurus
-        </button>
-      </div>
     </div>
+  );
+};
+
+// Data fetcher for use with suspense
+const fetchOrganizationData = () => {
+  let organizationPromise = null;
+
+  return () => {
+    if (!organizationPromise) {
+      organizationPromise = new Promise(async (resolve) => {
+        try {
+          // Simulate network delay to show loading state
+          await new Promise(r => setTimeout(r, 500)); 
+          resolve();
+        } catch (error) {
+          console.error("Failed to fetch organization data:", error);
+          resolve(); // Resolve anyway to avoid hanging
+        }
+      });
+    }
+    return organizationPromise;
+  };
+};
+
+// Create instance of the data fetcher
+const organizationDataFetcher = fetchOrganizationData();
+
+// Main component with Suspense
+const StrukturOrganisasi = () => {
+  // Trigger the data fetcher
+  organizationDataFetcher();
+
+  return (
+    <Suspense fallback={<Loading />}>
+      <OrganizationContent />
+    </Suspense>
   );
 };
 

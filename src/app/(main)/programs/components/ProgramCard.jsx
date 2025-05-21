@@ -1,83 +1,124 @@
-"use client";
+// src/components/ProgramCard.js
+'use client';
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, ArrowRight } from "lucide-react";
+import { CalendarDays, ArrowRight, Users, Tag } from "lucide-react"; // Menggunakan CalendarDays untuk ikon tanggal, Users untuk divisi, Tag untuk status
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { getImageUrl } from "@/lib/supabase";
+import { getImageUrl } from "@/lib/supabase"; // Pastikan path ini benar
 
-// Komponen Child - Card Program
 export const ProgramCard = ({ program }) => {
+  // Fallback untuk properti program
+  const programName = program?.name || "Nama Program";
+  const programDescription = program?.description || "Deskripsi program tidak tersedia.";
+  const programStartDate = program?.startDate;
+  const programEndDate = program?.endDate;
+  const programStatus = program?.status || "UPCOMING";
+  const programDivisionName = program?.division?.name || "Divisi Umum";
+  const programId = program?.id || "#";
+  const programImageUrl = program?.imageUrl;
+
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, "d MMMM yyyy", { locale: id });
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "UPCOMING":
-        return "bg-blue-100 text-blue-800";
-      case "ONGOING":
-        return "bg-green-100 text-green-800";
-      case "PAST":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-blue-100 text-blue-800";
+    if (!dateString) return "Segera";
+    try {
+      const date = new Date(dateString);
+      return format(date, "d MMM yyyy", { locale: id }); // Format tanggal lebih singkat
+    } catch (error) {
+      console.error("Invalid date string for program:", programName, error);
+      return "Tanggal Invalid";
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusStyle = (status) => {
     switch (status) {
       case "UPCOMING":
-        return "Akan Datang";
+        return {
+          bgColor: "bg-sky-100",
+          textColor: "text-sky-700",
+          borderColor: "border-sky-300",
+          label: "Akan Datang"
+        };
       case "ONGOING":
-        return "Berlangsung";
-      case "PAST":
-        return "Selesai";
+        return {
+          bgColor: "bg-emerald-100",
+          textColor: "text-emerald-700",
+          borderColor: "border-emerald-300",
+          label: "Berlangsung"
+        };
+      case "COMPLETED": // Mengganti PAST menjadi COMPLETED agar konsisten dengan filter
+        return {
+          bgColor: "bg-slate-100",
+          textColor: "text-slate-700",
+          borderColor: "border-slate-300",
+          label: "Selesai"
+        };
       default:
-        return status;
+        return {
+          bgColor: "bg-sky-100",
+          textColor: "text-sky-700",
+          borderColor: "border-sky-300",
+          label: status // Tampilkan status asli jika tidak dikenal
+        };
     }
   };
+
+  const statusStyle = getStatusStyle(programStatus);
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-transform hover:shadow-md hover:scale-[1.01]">
-      <div className="relative h-48 w-full">
+    <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl border border-slate-100 transition-all duration-300 ease-in-out flex flex-col h-full transform hover:-translate-y-1">
+      {/* Image Section */}
+      <div className="relative h-48 sm:h-52 w-full overflow-hidden">
         <Image
-          src={getImageUrl(program.imageUrl, "programs")}
-          alt={program.name}
+          src={getImageUrl(programImageUrl, "programs")}
+          alt={programName}
           fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
-        <div className="absolute top-3 right-3">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(program.status)}`}>
-            {getStatusText(program.status)}
-          </span>
-        </div>
+        {/* Optional: Darker overlay for better text contrast if needed */}
+        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div> */}
       </div>
 
-      <div className="p-5">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">{program.name}</h2>
+      {/* Content Section */}
+      <div className="p-4 sm:p-5 flex flex-col flex-grow">
+        {/* Status Badge and Division */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5 sm:mb-3">
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold border ${statusStyle.bgColor} ${statusStyle.textColor} ${statusStyle.borderColor}`}>
+                <Tag className="w-3 h-3 mr-1.5" />
+                {statusStyle.label}
+            </span>
+            <span className="text-xs sm:text-sm text-slate-500 inline-flex items-center">
+                <Users className="w-3.5 h-3.5 mr-1 text-indigo-500" />
+                {programDivisionName}
+            </span>
+        </div>
+
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2 line-clamp-2 hover:text-indigo-600 transition-colors">
+          <Link href={programId === "#" ? "#" : `/programs/${programId}`}>{programName}</Link>
+        </h2>
         
-        <div className="flex items-center text-sm text-gray-500 mb-3">
-          <Calendar className="h-4 w-4 mr-1" />
+        {/* Date Info */}
+        <div className="flex items-center text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
+          <CalendarDays className="w-4 h-4 mr-2 text-slate-400 flex-shrink-0" />
           <span>
-            {formatDate(program.startDate)} - {formatDate(program.endDate)}
+            {formatDate(programStartDate)}{programEndDate && programEndDate !== programStartDate ? ` - ${formatDate(programEndDate)}` : ''}
           </span>
         </div>
         
-        <p className="text-gray-600 mb-4 line-clamp-2">{program.description}</p>
+        <p className="text-sm text-slate-600 mb-4 line-clamp-3 leading-relaxed flex-grow">
+            {programDescription}
+        </p>
         
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-indigo-600">
-            Divisi {program.division.name}
-          </span>
-          
-          <Link href={`/programs/${program.id}`} className="flex items-center text-gray-800 font-medium hover:text-gray-900">
-            <span className="mr-1">Detail</span>
-            <ArrowRight className="h-4 w-4" />
+        {/* Action Link - dibuat lebih subtle dan menyatu */}
+        <div className="mt-auto pt-3 border-t border-slate-100">
+          <Link 
+            href={programId === "#" ? "#" : `/programs/${programId}`} 
+            className={`inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700 group/link transition-colors duration-200 ${programId === "#" ? "opacity-60 pointer-events-none" : ""}`}
+          >
+            Lihat Detail Program
+            <ArrowRight className="h-4 w-4 ml-1.5 transition-transform duration-300 group-hover/link:translate-x-1" />
           </Link>
         </div>
       </div>

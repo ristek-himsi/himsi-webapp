@@ -96,7 +96,7 @@ const AboutPage = () => {
       </section>
 
       {/* Organization Structure Section */}
-      <section className="mb-10">
+      <section>
         <StrukturOrganisasi />
       </section>
 

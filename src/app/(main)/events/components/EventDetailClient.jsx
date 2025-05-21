@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { getImageUrl } from "@/lib/supabase";
 
-// Komponen untuk menampilkan detail acara (client component)
 export const EventDetailClient = ({ event }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -43,18 +42,13 @@ export const EventDetailClient = ({ event }) => {
     }
   };
 
-  // Function untuk menangani pendaftaran via WhatsApp yang langsung membuka chat
   const handleRegistration = () => {
-    // Nomor WhatsApp yang akan dihubungi (bisa diganti sesuai kebutuhan)
-    const phoneNumber = "6281368859389"; // Ganti dengan nomor WhatsApp administrator
+    const phoneNumber = "6281368859389"; 
 
-    // Template pesan yang bisa dikustomisasi
     const message = `Halo, saya ingin mendaftar untuk acara: *${event.name}*\n\nTanggal: ${startDate} - ${endDate}\nLokasi: ${event.location}\n\nMohon informasi lebih lanjut mengenai pendaftaran. Terima kasih.`;
 
-    // Membuat URL WhatsApp dengan template pesan
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
 
-    // Menggunakan window.location untuk membuka WhatsApp di halaman yang sama
     window.location.href = whatsappUrl;
   };
 

@@ -70,8 +70,8 @@ export default function ContactPage() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Instagram</h3>
             <p className="text-gray-600 mb-4">Ikuti kami untuk info terbaru</p>
-            <a href="https://instagram.com/himsi_university" target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-800 font-medium transition-colors">
-              @himsi_university
+            <a href="https://instagram.com/himsi_uinrf" target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-800 font-medium transition-colors">
+              @himsi_uinrf
             </a>
           </motion.div>
         </div>

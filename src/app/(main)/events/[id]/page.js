@@ -9,8 +9,6 @@ const EventDetailPage = async ({ params }) => {
   const id = parseInt(params?.id);
   const event = await getEventById(id);
 
-  // Ambil base URL untuk gambar dari Supabase
-
   return <EventDetailClient event={event} />;
 };
 

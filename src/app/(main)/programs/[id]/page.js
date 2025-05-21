@@ -2,7 +2,6 @@ import React from "react";
 import { getProgramById } from "@/app/(roles)/admin/programs/libs/data";
 import { ProgramDetailCard } from "../components/ProgramDetailCard";
 
-// Server Component (Parent)
 const ProgramDetailPage = async ({ params }) => {
   const id = parseInt(params.id);
   const program = await getProgramById(id);

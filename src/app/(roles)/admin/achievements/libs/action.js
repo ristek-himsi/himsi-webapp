@@ -1,11 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
-const MAX_FILE_SIZE = 500 * 1024; // 500KB dalam bytes
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 mb
 
 export async function addAchievementAction(prevState, formData) {
   try {
@@ -22,7 +21,7 @@ export async function addAchievementAction(prevState, formData) {
     let imageUrl;
     if (imageFile && imageFile.size > 0) {
       if (imageFile.size > MAX_FILE_SIZE) {
-        return { message: `Ukuran file terlalu besar. Maksimum ${MAX_FILE_SIZE / 1024}KB.` };
+        return { message: `Ukuran file terlalu besar. Maksimum 1 MB.` };
       }
 
       try {
@@ -89,7 +88,7 @@ export async function updateAchievementAction(prevState, formData, achievementId
 
     if (imageFile && imageFile.size > 0) {
       if (imageFile.size > MAX_FILE_SIZE) {
-        return { message: `Ukuran file terlalu besar. Maksimum ${MAX_FILE_SIZE / 1024}KB.` };
+        return { message: `Ukuran file terlalu besar. Maksimum 1 MB.` };
       }
 
       try {

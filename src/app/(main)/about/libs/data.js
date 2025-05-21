@@ -1,13 +1,7 @@
 import prisma from "@/lib/prisma";
 
-/**
- * Fetches the active organization structure for the current academic year
- * with detailed information about each role holder
- * @returns {Promise<Object>} The organization structure with detailed user information
- */
 export async function getCurrentOrganization() {
   try {
-    // Get the current date to determine the current academic year
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
 
