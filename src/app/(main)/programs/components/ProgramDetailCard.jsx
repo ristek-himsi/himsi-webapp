@@ -57,13 +57,6 @@ export const ProgramDetailCard = ({ program }) => {
   
   return (
     <>
-      {/* Navigasi kembali */}
-      <div className="mb-6">
-        <Link href="/programs" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          <span>Kembali ke Daftar Program</span>
-        </Link>
-      </div>
 
       {/* Card Program dengan Layout yang Presisi */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">

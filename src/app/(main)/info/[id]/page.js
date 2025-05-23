@@ -16,14 +16,6 @@ const PostDetailPage = async ({ params }) => {
           <strong className="font-bold text-sm sm:text-base">Error!</strong>
           <span className="block sm:inline text-sm sm:text-base"> Tidak dapat menemukan post dengan ID ini.</span>
         </div>
-        <div className="mt-4">
-          <Link href="/info" className="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali ke daftar post
-          </Link>
-        </div>
       </div>
     );
   }
@@ -53,13 +45,6 @@ const PostDetailPage = async ({ params }) => {
 
   return (
     <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 mt-14 sm:mt-14">
-      <Link href="/info" className="text-indigo-600 hover:text-indigo-800 flex items-center mb-4 sm:mb-6 text-xs sm:text-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Kembali ke daftar post
-      </Link>
-
       <div className="bg-white shadow-lg rounded-xl overflow-hidden">
         {/* Post Header */}
         <div className="relative">

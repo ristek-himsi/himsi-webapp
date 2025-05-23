@@ -65,7 +65,7 @@ const DivisionCard = ({ division }) => {
       </div>
        {/* Tombol Link: padding dan ukuran font disesuaikan */}
        <Link 
-         href={divisionSlugOrId === "#" ? "#" : `/divisions/${divisionSlugOrId}`} 
+         href={divisionSlugOrId === "#" ? "#" : `/divisi/${divisionSlugOrId}`} 
          className={`block bg-gray-50 group-hover:bg-blue-50 text-center py-2.5 sm:py-3 px-4 sm:px-6 text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${divisionSlugOrId === "#" ? "pointer-events-none opacity-50" : ""}`}
        >
           Pelajari Lebih Lanjut

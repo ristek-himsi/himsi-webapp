@@ -46,7 +46,7 @@ const DivisionsSection = ({ divisions }) => {
         {divisions && divisions.length > 3 && (
           <div className="text-center">
             <Link
-              href="/divisions"
+              href="/divisi"
               className="w-full sm:w-auto inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 sm:px-10 rounded-lg transition-all transform hover:scale-105 duration-300 shadow-md hover:shadow-lg text-sm sm:text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
             >
               Lihat Semua Divisi

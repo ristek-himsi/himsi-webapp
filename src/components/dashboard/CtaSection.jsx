@@ -24,7 +24,7 @@ const CtaSection = () => {
         {/* Margin atas kontainer tombol dan layout tombol sudah cukup baik, hanya pastikan padding tombol juga responsif jika perlu */}
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center items-center sm:space-x-4 md:space-x-6 space-y-4 sm:space-y-0">
           <Link
-            href="/contact?subject=Proposal Kolaborasi HIMSI"
+            href="/kontak"
             // Padding tombol dan ukuran font disesuaikan
             className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 sm:px-8 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-md shadow-md text-indigo-700 bg-white hover:bg-indigo-50 transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white"
           >
