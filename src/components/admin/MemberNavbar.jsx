@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 // Import components
 import { Button } from "@/components/ui/button";
 // Import actions
-import { logoutLeader } from "@/lib/admin/action/logout";
+import { logoutMember } from "@/lib/admin/action/logout";
 // Import icons from lucide-react
 import { Menu, User, LogOut, ChevronDown, X } from "lucide-react";
 import { getImageUrl } from "@/lib/supabase";
@@ -36,7 +36,7 @@ const SubmitButton = () => {
 const FormLogout = () => {
   const [state, formAction] = useActionState(async (prevState, formData) => {
     console.log("Logout form submitted");
-    return await logoutLeader(prevState, formData);
+    return await logoutMember(prevState, formData);
   }, initialState);
   
   return (

@@ -3,7 +3,11 @@ import { getAllDivisions } from "@/app/(roles)/admin/divisions/libs/data";
 import DivisionCard from "./components/DivisionCard";
 import Loading from "@/app/loading";
 
-// Server Component untuk fetch data
+export const metadata = {
+  title: "Divisi Organisasi | HIMSI SAINTEK UIN Raden Fatah Palembang",
+  description: "Mengenal berbagai divisi dalam organisasi HIMSI SAINTEK UIN Raden Fatah Palembang dan peran masing-masing divisi",
+};
+
 const DivisionsContent = async () => {
   const divisions = await getAllDivisions();
   const totalDivisions = divisions.length;

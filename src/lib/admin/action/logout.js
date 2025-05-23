@@ -35,3 +35,19 @@ export async function logoutLeader(_, formData) {
 
   return redirect("/auth/leader/login");
 }
+
+export async function logoutMember(_, formData) {
+  const { session } = await getUser();
+
+  if (!session) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+  await lucia.invalidateSession(session.id);
+
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return redirect("/auth/member/login");
+}

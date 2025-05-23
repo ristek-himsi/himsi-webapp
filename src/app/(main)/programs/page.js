@@ -3,6 +3,11 @@ import { ProgramFilterWrapper } from "./components/ProgramFilterWrapper";
 import { getAllPrograms } from "@/app/(roles)/admin/programs/libs/data";
 import Loading from "@/app/loading";
 
+export const metadata = {
+  title: "Program & Kegiatan | HIMSI SAINTEK UIN Raden Fatah Palembang",
+  description: "Jelajahi berbagai program unggulan dan kegiatan rutin HIMSI SAINTEK UIN Raden Fatah Palembang. Mulai dari program akademik, pengembangan soft skill, pengabdian masyarakat, hingga program kerja sama strategis.",
+};
+
 // Komponen yang berisi konten utama
 const ProgramContent = async () => {
   const programs = await getAllPrograms();
