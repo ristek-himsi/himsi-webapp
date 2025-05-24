@@ -37,10 +37,6 @@ export function LoginFormLeader({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col max-w-md mx-auto", className)} {...props}>
-      <Link href="/" className="flex items-center gap-2 mb-4 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-        <ArrowLeftIcon size={16} />
-        <span>Kembali Ke Dashboard</span>
-      </Link>
       <Card className="shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Leader Login</CardTitle>

@@ -68,7 +68,7 @@ export default function LeaderNavbar({ user }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [activeTab, setActiveTab] = useState("/admin");
+  const [activeTab, setActiveTab] = useState("/leader");
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -101,16 +101,22 @@ export default function LeaderNavbar({ user }) {
     }
   }, []);
   
-  // Navigation items for Division Leaders
-  const navItems = [
-    { name: "Dashboard", href: "/leader" },
-    { name: "Organization", href: "/leader/organisasi" },
-    { name: "Division", href: "/leader/division/:id" },
-    { name: "Posts", href: "/leader/posts" },
-    { name: "Members", href: "/leader/members" },
-    { name: "Programs", href: "/leader/programs" },
-    { name: "Achievement", href: "/leader/achievement" },
-  ];
+  // Navigation items for Division Leaders - using userData.divisionId
+  const getNavItems = () => {
+    const divisionId = userData?.divisionId || user?.divisionId;
+    
+    return [
+      { name: "Dashboard", href: "/leader" },
+      { name: "Organization", href: "/leader/organisasi" },
+      { name: "My Division", href: `/leader/division/${divisionId}` },
+      { name: "Posts", href: "/leader/posts" },
+      { name: "Members", href: "/leader/members" },
+      { name: "Programs", href: "/leader/programs" },
+      { name: "Achievement", href: "/leader/achievement" },
+    ];
+  };
+
+  const navItems = getNavItems();
   
   // Close mobile menu on screen resize
   useEffect(() => {
@@ -131,7 +137,7 @@ export default function LeaderNavbar({ user }) {
           {/* Logo and primary nav */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/admin" className="flex items-center">
+              <Link href="/leader" className="flex items-center">
                 <Image
                   src="/logo-himsi.png"
                   alt="HIMSI Logo"
@@ -150,7 +156,7 @@ export default function LeaderNavbar({ user }) {
                   key={item.href}
                   href={item.href}
                   className={`${
-                    activeTab === item.href || (item.href === "/admin" && activeTab === "/admin")
+                    activeTab === item.href || (item.href === "/leader" && activeTab === "/leader")
                       ? "border-b-2 border-blue-500 text-gray-900"
                       : "border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   } inline-flex items-center px-1 pt-1 text-sm font-medium whitespace-nowrap transition-colors`}
@@ -186,7 +192,7 @@ export default function LeaderNavbar({ user }) {
                     <User size={18} className="text-gray-600" />
                   )}
                 </div>
-                <span className="hidden lg:block">{user?.name || "Leader"}</span>
+                <span className="hidden lg:block">{userData?.name || user?.name || "Leader"}</span>
                 <ChevronDown size={16} className={`transition-transform hidden lg:block ${userMenuOpen ? "rotate-180" : ""}`} />
               </button>
               
@@ -195,8 +201,9 @@ export default function LeaderNavbar({ user }) {
                   className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
                 >
                   <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">{user?.name || "Leader"}</p>
-                    <p className="text-xs text-gray-600 mt-1">{user?.email || "leader@himsi.org"}</p>
+                    <p className="text-sm font-semibold text-gray-900">{userData?.name || user?.name || "Leader"}</p>
+                    <p className="text-xs text-gray-600 mt-1">{userData?.email || user?.email || "leader@himsi.org"}</p>
+                    <p className="text-xs text-gray-500 mt-1">{userData?.position || "Division Leader"}</p>
                   </div>
                   <div className="border-t border-gray-100"></div>
                   <div className="px-4 py-2">
@@ -230,7 +237,7 @@ export default function LeaderNavbar({ user }) {
                 key={item.href}
                 href={item.href}
                 className={`${
-                  activeTab === item.href || (item.href === "/admin" && activeTab === "/admin")
+                  activeTab === item.href || (item.href === "/leader" && activeTab === "/leader")
                     ? "bg-blue-50 border-l-4 border-blue-500 text-blue-700"
                     : "border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300"
                 } block pl-3 pr-4 py-2 text-base font-medium`}
@@ -263,8 +270,9 @@ export default function LeaderNavbar({ user }) {
                 </div>
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-gray-800">{user?.name || "Leader"}</div>
-                <div className="text-sm font-medium text-gray-500">{user?.email || "leader@himsi.org"}</div>
+                <div className="text-base font-medium text-gray-800">{userData?.name || user?.name || "Leader"}</div>
+                <div className="text-sm font-medium text-gray-500">{userData?.email || user?.email || "leader@himsi.org"}</div>
+                <div className="text-xs text-gray-400">{userData?.position || "Division Leader"}</div>
               </div>
             </div>
             <div className="mt-3 space-y-1">

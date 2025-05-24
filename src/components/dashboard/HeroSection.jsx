@@ -11,30 +11,30 @@ const HeroSection = () => {
         <Image
           src="/hero-background.jpg" // Contoh: /images/hero-background.jpg atau /images/hero-pattern.svg
           alt="Latar Belakang Hero"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           priority // Penting untuk LCP (Largest Contentful Paint)
           className="opacity-70" // Kurangi opacity gambar jika terlalu dominan
         />
       </div>
-      
+             
       {/* Konten Hero dengan padding dan ukuran teks responsif */}
       <div className="relative max-w-7xl mx-auto py-20 px-4 sm:py-28 md:py-32 lg:py-40 sm:px-6 lg:px-8 z-10">
         <div className="text-center">
           {/* Ukuran font h1 disesuaikan untuk mobile dan layar lebih besar */}
-          <h1 className="text-3xl font-extrabold tracking-tight text-white 
-                         sm:text-4xl 
-                         md:text-5xl 
-                         lg:text-6xl 
-                         xl:text-7xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white
+                          sm:text-4xl
+                          md:text-5xl
+                          lg:text-6xl
+                          xl:text-7xl">
             <span className="block">Himpunan Mahasiswa</span>
             {/* 'xl:inline' agar 'Sistem Informasi' menjadi inline hanya di layar xl ke atas, di bawah itu tetap block */}
             <span className="block text-blue-300 hover:text-blue-200 transition-colors duration-300 mt-1 sm:mt-2 xl:inline xl:ml-3">Sistem Informasi</span>
           </h1>
           {/* Ukuran font paragraf dan margin disesuaikan */}
-          <p className="mt-4 max-w-sm mx-auto text-base text-blue-100 
-                         sm:text-lg sm:max-w-xl 
-                         md:mt-6 md:text-xl md:max-w-3xl">
+          <p className="mt-4 max-w-sm mx-auto text-base text-blue-100
+                          sm:text-lg sm:max-w-xl
+                          md:mt-6 md:text-xl md:max-w-3xl">
             UIN Raden Fatah Palembang - Bersama Membangun Generasi Teknologi Informasi Yang Unggul dan Berakhlak Mulia.
           </p>
           {/* Tombol CTA dengan layout responsif */}
