@@ -2,7 +2,11 @@ import prisma from "@/lib/prisma";
 
 export async function getAllSifest() {
   try {
-    const sifests = await prisma.sIFest.findMany({});
+    const sifests = await prisma.sIFest.findMany({
+      include: {
+        events: true,
+      },
+    });
     return sifests;
   } catch (e) {
     console.error(e);

@@ -1,3 +1,4 @@
+// src/app/(roles)/admin/events/components/EventDetailClient.jsx (or similar)
 "use client";
 
 import React, { useState, useCallback } from "react";
@@ -30,6 +31,7 @@ export const EventDetailClient = ({ event }) => {
     }
   }, []);
 
+  // Use optional chaining just in case event or its properties are null/undefined
   const startDate = formatDate(event?.startDate);
   const endDate = formatDate(event?.endDate);
 
@@ -66,8 +68,14 @@ export const EventDetailClient = ({ event }) => {
   };
 
   const handleRegistration = () => {
+    // Ensure event and event.name are available before constructing the message
+    if (!event || !event.name) {
+        console.error("Event data missing for registration");
+        alert("Detail acara tidak lengkap untuk pendaftaran."); // User feedback
+        return;
+    }
     const phoneNumber = "6281368859389"; // Ganti dengan nomor tujuan
-    const message = `Halo, saya tertarik untuk mendaftar acara: *${event.name}*.\n\nTanggal: ${startDate} - ${endDate}\nLokasi: ${event.location}\n\nMohon informasi lebih lanjut mengenai pendaftaran. Terima kasih.`;
+    const message = `Halo, saya tertarik untuk mendaftar acara: *${event.name}*.\n\nTanggal: ${startDate} ${startDate !== endDate && event.endDate ? `- ${endDate}` : ""}\nLokasi: ${event.location || 'Belum ditentukan'}\n\nMohon informasi lebih lanjut mengenai pendaftaran. Terima kasih.`;
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
       message
     )}`;
@@ -75,45 +83,57 @@ export const EventDetailClient = ({ event }) => {
   };
 
   const galleryItems = event?.gallery
-    ?.filter(item => item?.imageUrl)
+    ?.filter(item => item?.imageUrl) // Filter out items missing imageUrl
     .map((item) => ({
       src: getImageUrl(item.imageUrl, "events"),
       alt: item.caption || event.name || "Gambar Galeri",
-      title: item.caption || "",
-  })) || [];
+      title: item.caption || "", // Use caption as title if available
+  })) || []; // Ensure galleryItems is always an array
 
   const openLightbox = (index) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
+  // Handle case where event is null or undefined (e.g., not found)
   if (!event) {
     return (
-        <div className="bg-slate-50 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] text-center px-4 py-10"> {/* Disesuaikan min-h */}
+        <div className="bg-slate-50 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] text-center px-4 py-10">
             <Info className="w-16 h-16 text-gray-400 mb-4" />
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-2">Detail Acara Tidak Ditemukan</h2>
             <p className="text-gray-500 max-w-md mb-8">Maaf, kami tidak dapat menemukan detail untuk acara yang Anda cari. Mungkin acara tersebut telah dihapus atau URL tidak valid.</p>
+            {/* Optional: Add a back button */}
+            <button
+              onClick={() => router.back()}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <ArrowLeft className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+              Kembali
+            </button>
         </div>
     );
   }
-  
+
+  // --- SIFest Check ---
+  const isSIFestEvent = !!event.sifest; // Check if sifest relation exists and is not null
+  const sifestDetails = event.sifest; // Store sifest data if available
+  // --------------------
+
   return (
     <div className="bg-slate-50 mt-12 min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
         <article className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="lg:grid lg:grid-cols-5 lg:gap-x-8"> {/* Pembagian 3:2 untuk gambar dan info */}
-            
+
             {/* Kolom Gambar Utama (3/5 dari lebar di LG) */}
             <div className="lg:col-span-3 relative w-full bg-gray-200 aspect-[16/9] sm:aspect-[4/3] lg:aspect-[16/9]"> {/* Pertahankan rasio di LG */}
               {event.imageUrl ? (
                 <Image
-                  src={getImageUrl(event.imageUrl, "events")}
+                  src={getImageUrl(event.imageUrl, "events")} // Assuming getImageUrl works with "events" bucket
                   alt={`Gambar utama untuk ${event.name || "acara"}`}
                   fill
                   className="object-cover"
-                  // Sizes: 100vw hingga LG. Di LG, sekitar 60% dari max-w-6xl (1152px) - gap.
-                  // (1152px * 3/5) - (gap * 2/5) approx 670px.
                   sizes="(max-width: 1023px) 100vw, (min-width: 1024px) 670px"
                   priority
                 />
@@ -125,8 +145,8 @@ export const EventDetailClient = ({ event }) => {
             </div>
 
             {/* Kolom Informasi Acara (2/5 dari lebar di LG) */}
-            <div className="lg:col-span-2 p-5 sm:p-6 md:p-8 lg:p-8 flex flex-col"> {/* lg:p-8 untuk padding konsisten, flex flex-col agar tombol daftar bisa di bawah */}
-              <div className="flex-grow"> {/* Agar konten info memenuhi ruang sebelum tombol */}
+            <div className="lg:col-span-2 p-5 sm:p-6 md:p-8 lg:p-8 flex flex-col">
+              <div className="flex-grow">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4 md:mb-5">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 leading-tight flex-1">
                     {event.name || "Nama Acara Tidak Tersedia"}
@@ -135,6 +155,21 @@ export const EventDetailClient = ({ event }) => {
                   {event.status && getStatusPill(event.status)}
                   </span>
                 </div>
+
+                {/* --- Conditionally display SIFest info --- */}
+                {isSIFestEvent && sifestDetails && (
+                    <div className="mb-4 sm:mb-5 p-3 bg-purple-50 text-purple-800 border border-purple-200 rounded-md flex items-start gap-2 text-sm">
+                       <Info className="h-4 w-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                       <div>
+                         <h3 className="font-semibold text-purple-900">Bagian dari SIFest {sifestDetails.year}</h3>
+                         {sifestDetails.theme && <p className="text-purple-800 mt-0.5">{sifestDetails.theme}</p>}
+                         {/* Optionally add more SIFest details like SIFest dates */}
+                         {/* <p className="text-purple-800 mt-0.5">SIFest: {formatDate(sifestDetails.startDate)} - {formatDate(sifestDetails.endDate)}</p> */}
+                       </div>
+                    </div>
+                )}
+                {/* -------------------------------------- */}
+
 
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-6 sm:mb-8">
                   {event.description || "Deskripsi acara tidak tersedia saat ini."}
@@ -175,24 +210,26 @@ export const EventDetailClient = ({ event }) => {
               </div>
 
             <div className="mt-auto pt-6">
-  {event.status === "UPCOMING" ? (
-    <button
-      onClick={handleRegistration}
-      className="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-900 hover:to-gray-800 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-    >
-      Daftar via WhatsApp
-    </button>
-  ) : (
-    <div className="w-full bg-gray-200 text-gray-600 font-semibold py-3 px-8 rounded-lg text-center">
-      Pendaftaran Ditutup
-    </div>
-  )}
-</div>
+            {/* Use event?.status for safer access */}
+            {event?.status === "UPCOMING" ? (
+              <button
+                onClick={handleRegistration}
+                className="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-900 hover:to-gray-800 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+              >
+                Daftar via WhatsApp
+              </button>
+            ) : (
+              <div className="w-full bg-gray-200 text-gray-600 font-semibold py-3 px-8 rounded-lg text-center">
+                Pendaftaran Ditutup
+              </div>
+            )}
+          </div>
 
             </div>
           </div>
         </article>
 
+        {/* Ensure galleryItems is checked */}
         {galleryItems.length > 0 && (
           <section className="mt-10 sm:mt-12 lg:mt-16">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-6 sm:mb-8">
@@ -201,7 +238,7 @@ export const EventDetailClient = ({ event }) => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
               {galleryItems.map((item, index) => (
                 <button
-                  key={item.src + index}
+                  key={item.src + index} // Use a unique key, combination of src and index is safer
                   aria-label={`Lihat gambar ${item.alt || 'galeri'} lebih besar`}
                   className="relative aspect-square rounded-md overflow-hidden shadow-md group cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 focus:ring-offset-slate-50"
                   onClick={() => openLightbox(index)}
@@ -226,6 +263,7 @@ export const EventDetailClient = ({ event }) => {
             </div>
           </section>
         )}
+
       </div>
 
       {galleryItems.length > 0 && (

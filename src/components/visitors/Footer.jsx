@@ -255,8 +255,19 @@ export default function Footer() {
         </div>
         
         {/* Copyright - Visible on all devices */}
-        <div className="mt-6 pt-4 border-t border-gray-700 text-center text-gray-400 text-xs">
+      <div className="mt-6 pt-4 border-t border-gray-700 text-center text-gray-400 text-xs">
           <p>© {new Date().getFullYear()} HIMSI. All rights reserved.</p>
+          <p className="mt-2">
+            Collaboration with{' '}
+            <a 
+              href="https://instagram.com/adibmuhammadmaros" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+            >
+              Adib Muhammad Maros
+            </a>
+          </p>
         </div>
       </div>
     </footer>

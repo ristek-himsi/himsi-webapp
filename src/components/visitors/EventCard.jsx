@@ -1,4 +1,4 @@
-// src/components/EventCard.js
+// src/components/visitors/EventCard.jsx
 'use client';
 import Link from "next/link";
 import Image from "next/image";
@@ -11,10 +11,14 @@ const EventCard = ({ event, index }) => {
   const eventDescription = event?.description || "Deskripsi acara tidak tersedia.";
   const eventLocation = event?.location || "Lokasi tidak diketahui";
   const eventStartDate = event?.startDate;
-  // Mengambil status dari event, dan pastikan untuk konsistensi case (misal, selalu uppercase)
   const rawEventStatus = String(event?.status || "UPCOMING").toUpperCase(); // Ambil dan ubah ke uppercase
   const eventId = event?.id || "#";
   const eventImageUrl = event?.imageUrl;
+
+  // Check if the event is part of SIFest
+  const isSIFestEvent = !!event?.sifest;
+  const sifestYear = event?.sifest?.year; // Safely get SIFest year
+
 
   const statusConfig = {
     UPCOMING: {
@@ -35,8 +39,7 @@ const EventCard = ({ event, index }) => {
       ),
       label: "Berlangsung"
     },
-    // PERBAIKAN DI SINI: Ubah "PAST" menjadi "COMPLETED"
-    COMPLETED: {
+    COMPLETED: { // Should match Prisma enum
       bgColor: "bg-slate-500",
       textColor: "text-slate-50",
       icon: (
@@ -46,16 +49,12 @@ const EventCard = ({ event, index }) => {
       ),
       label: "Selesai"
     }
-    // Anda bisa menambahkan default case jika diperlukan:
-    // DEFAULT_STATUS: { ... }
+    // Add a default case if rawEventStatus might be something else
+    // default: { ... }
   };
 
-  // Gunakan rawEventStatus yang sudah di-uppercase untuk lookup
-  // Jika tidak ditemukan, fallback ke UPCOMING atau ke status default jika Anda punya
+  // Use rawEventStatus for lookup, fallback to UPCOMING if status is unexpected
   const status = statusConfig[rawEventStatus] || statusConfig.UPCOMING;
-  // Untuk debugging, Anda bisa log di sini:
-  // console.log(`Event: ${eventName}, Raw Status: ${event?.status}, Processed Status Key: ${rawEventStatus}, Final Label: ${status.label}`);
-
 
   return (
     <motion.div
@@ -74,24 +73,34 @@ const EventCard = ({ event, index }) => {
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
+          {/* Overlay for readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-          
+
+          {/* SIFest Indicator Badge */}
+          {isSIFestEvent && (
+             <span className="absolute top-3 left-3 bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md">
+                SIFest {sifestYear}
+             </span>
+          )}
+          {/* --- End SIFest Indicator --- */}
+
           <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
             <h2 className="text-lg sm:text-xl font-semibold text-white mb-1.5 line-clamp-2 leading-tight">
               {eventName}
             </h2>
+            {/* Status Pill */}
             <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium ${status.bgColor} ${status.textColor} shadow-sm`}>
               {status.icon}
-              {status.label} {/* Label ini sekarang akan benar */}
+              {status.label}
             </div>
           </div>
         </div>
-        
+
         <div className="p-4 sm:p-5 flex flex-col flex-grow">
           <p className="text-slate-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
             {eventDescription}
           </p>
-          
+
           <div className="space-y-2 mb-5 text-xs sm:text-sm text-slate-500">
             <div className="flex items-center">
               <svg className="w-4 h-4 mr-2 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -99,11 +108,11 @@ const EventCard = ({ event, index }) => {
               </svg>
               {eventStartDate ? new Date(eventStartDate).toLocaleDateString("id-ID", {
                 day: "numeric",
-                month: "short",
+                month: "short", // e.g., Jan, Feb
                 year: "numeric",
               }) : "Tanggal akan diumumkan"}
             </div>
-            
+
             <div className="flex items-center">
               <svg className="w-4 h-4 mr-2 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -112,7 +121,7 @@ const EventCard = ({ event, index }) => {
               <span className="line-clamp-1">{eventLocation}</span>
             </div>
           </div>
-          
+
           <Link
             href={eventId === "#" ? "#" : `/events/${eventId}`}
             className={`block w-full text-center px-4 py-2.5 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors duration-300 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 ${eventId === "#" ? "opacity-60 pointer-events-none" : ""}`}

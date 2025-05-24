@@ -14,11 +14,15 @@ import CtaSection from "@/components/dashboard/CtaSection";
 import { getAllEvents } from "./(roles)/admin/events/libs/data";
 import { getAllPosts } from "./(roles)/admin/posts/libs/data";
 import { getAllDivisions } from "./(roles)/admin/divisions/libs/data";
+import { getAllSifest } from "./(roles)/admin/sifests/libs/data";
 
 const Page = async () => {
   const eventsData = await getAllEvents();
   const postsData = await getAllPosts();
   const divisionsData = await getAllDivisions();
+
+  const sifests = await getAllSifest();
+  console.log(sifests);
 
   const events = Array.isArray(eventsData) ? eventsData : eventsData?.data || [];
   // Pastikan postsData yang dilempar adalah array, jika dari API biasanya ada di dalam properti data
