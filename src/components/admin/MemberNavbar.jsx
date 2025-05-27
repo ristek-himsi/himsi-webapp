@@ -101,19 +101,18 @@ export default function MemberNavbar({ user }) {
     }
   }, []);
   
-  // Navigation items for Members
-const navItems = [
-  { name: "Dashboard", href: "/member" },
-  { name: "Organisasi", href: "/member/organisasi" },
-  { name: "Divisi", href: "/member/divisi" },
-  { name: "Program", href: "/member/programs" },
-  { name: "Acara", href: "/member/events" },
-  { name: "SIFest", href: "/member/sifest" },
-  { name: "Artikel", href: "/member/posts" },
-  { name: "Galeri", href: "/member/gallery" },
-  { name: "Prestasi", href: "/member/achievement" },
-  { name: "Profil", href: "/member/profile" },
-];
+  // Updated Navigation items for Members - sesuai dengan kemampuan dari database schema
+  const navItems = [
+    { name: "Dashboard", href: "/member" },
+    { name: "Divisi Saya", href: "/member/my-division" },
+    { name: "Program", href: "/member/programs" },
+    { name: "Event", href: "/member/events" },
+    { name: "SIFest", href: "/member/sifest" },
+    { name: "Berita", href: "/member/news" },
+    { name: "Galeri", href: "/member/gallery" },
+    { name: "Prestasi", href: "/member/achievements" },
+    { name: "Tulis Artikel", href: "/member/create-post" },
+  ];
   
   // Close mobile menu on screen resize
   useEffect(() => {
@@ -200,7 +199,29 @@ const navItems = [
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-sm font-semibold text-gray-900">{user?.name || "Member"}</p>
                     <p className="text-xs text-gray-600 mt-1">{user?.email || "member@himsi.org"}</p>
+                    <p className="text-xs text-blue-600 mt-1 font-medium">
+                      {userData?.division?.name || "Belum ada divisi"}
+                    </p>
                   </div>
+                  
+                  {/* Quick access menu in dropdown */}
+                  <Link 
+                    href="/member/profile" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <User size={16} className="inline mr-2" />
+                    Profil Saya
+                  </Link>
+                  
+                  <Link 
+                    href="/member/my-posts" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    Draft Artikel Saya
+                  </Link>
+                  
                   <div className="border-t border-gray-100"></div>
                   <div className="px-4 py-2">
                     <FormLogout key="logout-form" />
@@ -245,6 +266,24 @@ const navItems = [
                 {item.name}
               </Link>
             ))}
+            
+            {/* Additional mobile menu items */}
+            <div className="border-t border-gray-200 mt-2 pt-2">
+              <Link 
+                href="/member/profile"
+                className="border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 block pl-3 pr-4 py-2 text-base font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Profil Saya
+              </Link>
+              <Link 
+                href="/member/my-posts"
+                className="border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 block pl-3 pr-4 py-2 text-base font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Draft Artikel Saya
+              </Link>
+            </div>
           </div>
           
           {/* User section in mobile menu */}
@@ -268,6 +307,9 @@ const navItems = [
               <div className="ml-3">
                 <div className="text-base font-medium text-gray-800">{user?.name || "Member"}</div>
                 <div className="text-sm font-medium text-gray-500">{user?.email || "member@himsi.org"}</div>
+                <div className="text-xs font-medium text-blue-600 mt-1">
+                  {userData?.division?.name || "Belum ada divisi"}
+                </div>
               </div>
             </div>
             <div className="mt-3 space-y-1">
