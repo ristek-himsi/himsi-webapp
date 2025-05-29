@@ -6,7 +6,7 @@ import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 // Konfigurasi ukuran file maksimum (2MB)
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB dalam bytes
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB dalam bytes
 
 export async function addUser(prevState, formData) {
   try {

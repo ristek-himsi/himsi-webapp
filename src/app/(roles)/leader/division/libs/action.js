@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { deleteFile, uploadImage } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 5MB
 
 export async function updateDivisionByLeaderAction(_, formData, divisionId) {
   try {

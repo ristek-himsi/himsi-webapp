@@ -105,12 +105,7 @@ export default function MemberNavbar({ user }) {
   const navItems = [
     { name: "Dashboard", href: "/member" },
     { name: "Divisi Saya", href: "/member/my-division" },
-    { name: "Program", href: "/member/programs" },
-    { name: "Event", href: "/member/events" },
-    { name: "SIFest", href: "/member/sifest" },
-    { name: "Berita", href: "/member/news" },
-    { name: "Galeri", href: "/member/gallery" },
-    { name: "Prestasi", href: "/member/achievements" },
+    // { name: "Galeri", href: "/member/gallery" },
     { name: "Tulis Artikel", href: "/member/create-post" },
   ];
   

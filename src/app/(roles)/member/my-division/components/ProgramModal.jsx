@@ -1,23 +1,24 @@
-import React from 'react';
-import Image from 'next/image';
-import { getImageUrl } from '@/lib/supabase';
+"use client"
+import React from "react";
+import Image from "next/image";
+import { getImageUrl } from "@/lib/supabase";
 
 const ProgramModal = ({ program, isOpen, onClose }) => {
-  if (!isOpen || !program) return null;
+  if (!isOpen) return null;
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("id-ID", {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString("id-ID", {
-      hour: '2-digit',
-      minute: '2-digit'
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -26,273 +27,218 @@ const ProgramModal = ({ program, isOpen, onClose }) => {
     const startDate = new Date(program.startDate);
     const diffTime = startDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return "Hari ini";
     if (diffDays === 1) return "Besok";
     if (diffDays > 0) return `${diffDays} hari lagi`;
     return "Sudah dimulai";
   };
 
-  const getDuration = () => {
-    const startDate = new Date(program.startDate);
-    const endDate = new Date(program.endDate);
-    const diffTime = endDate - startDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return "1 hari";
-    return `${diffDays} hari`;
-  };
-
-  const getStatusInfo = (status) => {
+  const getStatusColor = (status) => {
     switch (status) {
-      case 'UPCOMING':
-        return {
-          color: 'bg-blue-100 text-blue-800 border-blue-200',
-          icon: (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          ),
-          text: 'Akan Datang'
-        };
-      case 'ONGOING':
-        return {
-          color: 'bg-green-100 text-green-800 border-green-200',
-          icon: (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a2.5 2.5 0 002.5-2.5S12 5 10 5s-3 2.5-3 2.5 1 2.5 2.5 2.5H11m0 0v1.5a2.5 2.5 0 002.5 2.5s2.5-1 2.5-3-2.5-3-2.5-3H13V10z" />
-            </svg>
-          ),
-          text: 'Sedang Berlangsung'
-        };
-      case 'COMPLETED':
-        return {
-          color: 'bg-gray-100 text-gray-800 border-gray-200',
-          icon: (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          ),
-          text: 'Selesai'
-        };
+      case "UPCOMING":
+        return "bg-blue-50 text-blue-700 border border-blue-200";
+      case "ONGOING":
+        return "bg-green-50 text-green-700 border border-green-200";
+      case "COMPLETED":
+        return "bg-gray-50 text-gray-700 border border-gray-200";
       default:
-        return {
-          color: 'bg-gray-100 text-gray-800 border-gray-200',
-          icon: null,
-          text: status
-        };
+        return "bg-gray-50 text-gray-700 border border-gray-200";
     }
   };
 
-  const statusInfo = getStatusInfo(program.status);
+  const getStatusText = (status) => {
+    switch (status) {
+      case "UPCOMING":
+        return "Akan Datang";
+      case "ONGOING":
+        return "Berlangsung";
+      case "COMPLETED":
+        return "Selesai";
+      default:
+        return status;
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-        {/* Modal Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-green-500 to-teal-500 p-6 rounded-t-2xl">
-          <div className="flex justify-between items-start">
-            <div className="flex-1 pr-4">
-              <h2 className="text-2xl font-bold text-white mb-2">{program.name}</h2>
-              <div className="flex items-center gap-3">
-                <span className={`px-3 py-1 text-sm font-semibold rounded-full border bg-white/20 text-white border-white/30 flex items-center gap-2`}>
-                  {statusInfo.icon}
-                  {statusInfo.text}
-                </span>
-                <span className="text-white/90 font-medium">
-                  {getDaysUntilStart()}
-                </span>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      />
+      
+      {/* Modal Container */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
+          
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:text-gray-900 hover:shadow-xl"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
 
-        {/* Modal Content */}
-        <div className="p-6 space-y-6">
           {/* Program Image */}
           {program.imageUrl && (
-            <div className="rounded-xl overflow-hidden shadow-lg">
+            <div className="relative h-48 w-full overflow-hidden md:h-64">
               <Image 
                 src={getImageUrl(program.imageUrl, "programs")} 
                 alt={program.name}
-                width={600}
-                height={300}
-                className="w-full h-64 object-cover"
+                fill
+                className="object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              
+              {/* Status Badge on Image */}
+              <div className="absolute bottom-4 left-4">
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(program.status)}`}>
+                  {getStatusText(program.status)}
+                </span>
+              </div>
             </div>
           )}
 
-          {/* Program Description */}
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Deskripsi Program
-            </h3>
-            <p className="text-gray-700 leading-relaxed">
-              {program.description}
-            </p>
-          </div>
+          {/* Content */}
+          <div className="p-6 md:p-8">
+            
+            {/* Header */}
+            <div className="mb-6">
+              <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+                  {program.name}
+                </h2>
+                <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {getDaysUntilStart()}
+                </div>
+              </div>
+              
+              {program.description && (
+                <p className="text-gray-600 leading-relaxed">
+                  {program.description}
+                </p>
+              )}
+            </div>
 
-          {/* Program Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Date Information */}
-            <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Jadwal Program
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-start">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+            {/* Details Grid */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              
+              {/* Start Date */}
+              <div className="rounded-xl bg-gray-50 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+                    <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-800">Tanggal Mulai</div>
-                    <div className="text-gray-600">{formatDate(program.startDate)}</div>
-                    <div className="text-sm text-gray-500">{formatTime(program.startDate)}</div>
+                    <p className="text-sm font-medium text-gray-500">Tanggal Mulai</p>
+                    <p className="text-sm font-semibold text-gray-900">{formatDate(program.startDate)}</p>
+                    {program.startTime && (
+                      <p className="text-xs text-gray-600">{formatTime(program.startDate)}</p>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+              </div>
+
+              {/* End Date */}
+              <div className="rounded-xl bg-gray-50 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
+                    <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-800">Tanggal Selesai</div>
-                    <div className="text-gray-600">{formatDate(program.endDate)}</div>
-                    <div className="text-sm text-gray-500">{formatTime(program.endDate)}</div>
+                    <p className="text-sm font-medium text-gray-500">Tanggal Selesai</p>
+                    <p className="text-sm font-semibold text-gray-900">{formatDate(program.endDate)}</p>
+                    {program.endTime && (
+                      <p className="text-xs text-gray-600">{formatTime(program.endDate)}</p>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Program Statistics */}
-            <div className="bg-purple-50 rounded-xl p-6 border border-purple-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H9z" />
-                </svg>
-                Informasi Program
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
-                  <span className="font-medium text-gray-700">Durasi</span>
-                  <span className="font-bold text-purple-600">{getDuration()}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
-                  <span className="font-medium text-gray-700">Status</span>
-                  <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${statusInfo.color} flex items-center gap-1`}>
-                    {statusInfo.icon}
-                    {statusInfo.text}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
-                  <span className="font-medium text-gray-700">Dimulai</span>
-                  <span className="font-bold text-purple-600">{getDaysUntilStart()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Timeline */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Timeline Program
-            </h3>
-            <div className="relative">
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 to-red-500"></div>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-4 relative z-10">
-                    1
-                  </div>
-                  <div className="flex-1 pt-1">
-                    <div className="font-semibold text-gray-800">Program Dimulai</div>
-                    <div className="text-gray-600">{formatDate(program.startDate)}</div>
-                    <div className="text-sm text-gray-500">{formatTime(program.startDate)}</div>
+              {/* Location */}
+              {program.location && (
+                <div className="rounded-xl bg-gray-50 p-4 sm:col-span-2">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                      <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Lokasi</p>
+                      <p className="text-sm font-semibold text-gray-900">{program.location}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-4 relative z-10">
-                    2
+              )}
+
+              {/* Budget */}
+              {program.budget && (
+                <div className="rounded-xl bg-gray-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-100">
+                      <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Anggaran</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        Rp {program.budget.toLocaleString('id-ID')}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 pt-1">
-                    <div className="font-semibold text-gray-800">Program Selesai</div>
-                    <div className="text-gray-600">{formatDate(program.endDate)}</div>
-                    <div className="text-sm text-gray-500">{formatTime(program.endDate)}</div>
+                </div>
+              )}
+
+              {/* Participants */}
+              {program.maxParticipants && (
+                <div className="rounded-xl bg-gray-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                      <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Peserta</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {program.currentParticipants || 0} / {program.maxParticipants} orang
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-          </div>
 
-          {/* Additional Information */}
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border border-indigo-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Informasi Tambahan
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white/70 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">Dibuat pada</div>
-                <div className="font-semibold text-gray-800">
-                  {program.createdAt ? formatDate(program.createdAt) : 'Tidak tersedia'}
-                </div>
+            {/* Additional Info */}
+            {program.notes && (
+              <div className="mt-6 rounded-xl bg-blue-50 p-4">
+                <h4 className="mb-2 text-sm font-semibold text-blue-900">Catatan Tambahan</h4>
+                <p className="text-sm text-blue-800 leading-relaxed">{program.notes}</p>
               </div>
-              <div className="bg-white/70 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">Terakhir diupdate</div>
-                <div className="font-semibold text-gray-800">
-                  {program.updatedAt ? formatDate(program.updatedAt) : 'Tidak tersedia'}
-                </div>
-              </div>
-            </div>
-          </div>
+            )}
 
-          {/* Location/Venue (if available) */}
-          {program.location && (
-            <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Lokasi
-              </h3>
-              <p className="text-gray-700">{program.location}</p>
+            {/* Action Buttons */}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <button
+                onClick={onClose}
+                className="flex-1 rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 sm:flex-none"
+              >
+                Tutup
+              </button>
             </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div className="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Tutup
-            </button>
-            <button className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Simpan Program
-            </button>
           </div>
         </div>
       </div>
