@@ -95,7 +95,7 @@ export async function addArticleByMemberAction(prevState, formData) {
     return {
       success: true,
       message: "Artikel berhasil dibuat dan akan direview terlebih dahulu sebelum dipublikasikan!",
-      redirectUrl: "/member/articles",
+      redirectUrl: "/member/my-posts",
       data: {
         id: newPost.id,
         title: newPost.title,
