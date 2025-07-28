@@ -8,6 +8,8 @@ import CategoryFilter from "./components/CategoryFilter"; // Pastikan path ini b
 import TimeFilter from "./components/TimeFilter"; // Pastikan path ini benar
 import Pagination from "./components/Pagination"; // Tambahkan impor Pagination, pastikan path benar
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Info & Berita | HIMSI SAINTEK UIN Raden Fatah Palembang",
   description: "Dapatkan informasi terkini, berita, pengumuman, dan update terbaru dari HIMSI SAINTEK UIN Raden Fatah Palembang. Tetap terhubung dengan perkembangan organisasi dan dunia teknologi informasi.",

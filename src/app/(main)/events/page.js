@@ -3,6 +3,8 @@ import { getAllEvents } from "@/app/(roles)/admin/events/libs/data";
 import EventsWithFilter from "@/components/visitors/EventsWithFilter";
 import Loading from "@/app/loading";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Events | HIMSI SAINTEK UIN Raden Fatah Palembang",
   description: "Temukan berbagai acara, kegiatan, dan event menarik dari HIMSI SAINTEK UIN Raden Fatah Palembang. Mulai dari seminar teknologi, workshop, kompetisi, hingga kegiatan pengembangan diri mahasiswa.",

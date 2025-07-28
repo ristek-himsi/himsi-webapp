@@ -8,6 +8,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Info, Search } from "lucide-react";
 import { format } from "date-fns";
 import { id as localeID } from "date-fns/locale";
 import { getImageUrl } from "@/lib/supabase"; // Pastikan path ini benar
+import { phoneNumber } from "@/app/constant/data";
 
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -74,7 +75,6 @@ export const EventDetailClient = ({ event }) => {
         alert("Detail acara tidak lengkap untuk pendaftaran."); // User feedback
         return;
     }
-    const phoneNumber = "6281368859389"; // Ganti dengan nomor tujuan
     const message = `Halo, saya tertarik untuk mendaftar acara: *${event.name}*.\n\nTanggal: ${startDate} ${startDate !== endDate && event.endDate ? `- ${endDate}` : ""}\nLokasi: ${event.location || 'Belum ditentukan'}\n\nMohon informasi lebih lanjut mengenai pendaftaran. Terima kasih.`;
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
       message
