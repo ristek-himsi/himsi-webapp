@@ -94,6 +94,12 @@ const EditDivisionForm = ({ division }) => {
           />
         </div>
 
+        {/* Leader ID (Read Only) */}
+        <div>
+         
+          {/* Hidden input to ensure leaderId is sent with form */}
+          <input type="hidden" name="leaderId" value={division.leaderId} />
+        </div>
 
         {/* Logo Upload with preview and file size validation */}
         <div>
